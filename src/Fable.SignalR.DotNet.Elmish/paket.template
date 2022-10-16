@@ -14,24 +14,3 @@ dependencies
         FSharp.Core >= LOCKED:Major-Net6
         Microsoft.AspNetCore.SignalR.Client ~> LOCKED:Major-Net6
         Microsoft.AspNetCore.SignalR.Protocols.NewtonsoftJson ~> LOCKED:Major-Net6
-    framework: net5
-        Elmish ~> LOCKED:Major-Net5
-        Fable.Remoting.Json ~> LOCKED:Major-Net5
-        Fable.Remoting.MsgPack ~> LOCKED:Major-Net5
-        FSharp.Core >= LOCKED:Major-Net5
-        Microsoft.AspNetCore.SignalR.Client ~> LOCKED:Major-Net5
-        Microsoft.AspNetCore.SignalR.Protocols.NewtonsoftJson ~> LOCKED:Major-Net5
-    framework: netcoreapp3.1
-        Elmish ~> LOCKED:Major-NetCoreApp3
-        Fable.Remoting.Json ~> LOCKED:Major-NetCoreApp3
-        Fable.Remoting.MsgPack ~> LOCKED:Major-NetCoreApp3
-        FSharp.Core >= LOCKED:Major-NetCoreApp3
-        Microsoft.AspNetCore.SignalR.Client ~> LOCKED:Major-NetCoreApp3
-        Microsoft.AspNetCore.SignalR.Protocols.NewtonsoftJson ~> LOCKED:Major-NetCoreApp3
-    framework: netstandard2.0
-        Elmish ~> LOCKED:Major-NetStandard2
-        Fable.Remoting.Json ~> LOCKED:Major-NetStandard2
-        Fable.Remoting.MsgPack ~> LOCKED:Major-NetStandard2
-        FSharp.Core >= LOCKED:Major-NetStandard2
-        Microsoft.AspNetCore.SignalR.Client ~> LOCKED:Major-NetStandard2
-        Microsoft.AspNetCore.SignalR.Protocols.NewtonsoftJson ~> LOCKED:Major-NetStandard2

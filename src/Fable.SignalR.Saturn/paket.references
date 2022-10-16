@@ -1,18 +1,4 @@
-﻿group NetCoreApp3
-    Fable.Remoting.Json
-    FSharp.Core
-    Microsoft.AspNetCore.Authentication.JwtBearer
-    Microsoft.AspNetCore.SignalR.Protocols.NewtonsoftJson
-    Saturn
-
-group Net5
-    Fable.Remoting.Json
-    FSharp.Core
-    Microsoft.AspNetCore.Authentication.JwtBearer
-    Microsoft.AspNetCore.SignalR.Protocols.NewtonsoftJson
-    Saturn
-
-group Net6
+﻿group Net6
     Fable.Remoting.Json
     FSharp.Core
     Microsoft.AspNetCore.Authentication.JwtBearer

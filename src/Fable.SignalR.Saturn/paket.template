@@ -13,15 +13,3 @@ dependencies
         Microsoft.AspNetCore.Authentication.JwtBearer ~> LOCKED:Major-Net6
         Microsoft.AspNetCore.SignalR.Protocols.NewtonsoftJson ~> LOCKED:Major-Net6
         Saturn >= LOCKED:Major-Net6
-    framework: net5
-        Fable.Remoting.Json ~> LOCKED:Major-Net5
-        FSharp.Core >= LOCKED:Major-Net5
-        Microsoft.AspNetCore.Authentication.JwtBearer ~> LOCKED:Major-Net5
-        Microsoft.AspNetCore.SignalR.Protocols.NewtonsoftJson ~> LOCKED:Major-Net5
-        Saturn >= LOCKED:Major-Net5
-    framework: netcoreapp3.1
-        Fable.Remoting.Json ~> LOCKED:Major-NetCoreApp3
-        FSharp.Core >= LOCKED:Major-NetCoreApp3
-        Microsoft.AspNetCore.Authentication.JwtBearer ~> LOCKED:Major-NetCoreApp3
-        Microsoft.AspNetCore.SignalR.Protocols.NewtonsoftJson ~> LOCKED:Major-NetCoreApp3
-        Saturn >= LOCKED:Major-NetCoreApp3

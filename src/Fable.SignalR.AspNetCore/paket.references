@@ -1,20 +1,4 @@
-﻿group NetCoreApp3
-    Fable.Remoting.Json
-    Fable.Remoting.MsgPack
-    FSharp.Core
-    Microsoft.AspNetCore.SignalR.Protocols.NewtonsoftJson
-    System.Text.Encodings.Web
-    TaskBuilder.fs
-
-group Net5
-    Fable.Remoting.Json
-    Fable.Remoting.MsgPack
-    FSharp.Core
-    Microsoft.AspNetCore.SignalR.Protocols.NewtonsoftJson
-    System.Text.Encodings.Web
-    TaskBuilder.fs
-
-group Net6
+﻿group Net6
     Fable.Remoting.Json
     Fable.Remoting.MsgPack
     FSharp.Core

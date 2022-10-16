@@ -13,17 +13,3 @@ dependencies
         FSharp.Core >= LOCKED:Major-Net6
         Microsoft.AspNetCore.SignalR.Protocols.NewtonsoftJson ~> LOCKED:Major-Net6
         System.Text.Encodings.Web ~> LOCKED:Major-Net6
-    framework: net5
-        Fable.Remoting.Json ~> LOCKED:Major-Net5
-        Fable.Remoting.MsgPack ~> LOCKED:Major-Net5
-        FSharp.Core >= LOCKED:Major-Net5
-        Microsoft.AspNetCore.SignalR.Protocols.NewtonsoftJson ~> LOCKED:Major-Net5
-        System.Text.Encodings.Web ~> LOCKED:Major-Net5
-        TaskBuilder.fs ~> LOCKED:Major-Net5
-    framework: netcoreapp3.1
-        Fable.Remoting.Json ~> LOCKED:Major-NetCoreApp3
-        Fable.Remoting.MsgPack ~> LOCKED:Major-NetCoreApp3
-        FSharp.Core >= LOCKED:Major-NetCoreApp3
-        Microsoft.AspNetCore.SignalR.Protocols.NewtonsoftJson ~> LOCKED:Major-NetCoreApp3
-        System.Text.Encodings.Web ~> LOCKED:Major-NetCoreApp3
-        TaskBuilder.fs ~> LOCKED:Major-NetCoreApp3

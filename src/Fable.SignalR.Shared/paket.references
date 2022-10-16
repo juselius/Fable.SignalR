@@ -1,25 +1,4 @@
-﻿group NetCoreApp3
-    Fable.Remoting.Json
-    Fable.Remoting.MsgPack
-    FSharp.Core
-    Microsoft.AspNetCore.SignalR.Protocols.NewtonsoftJson
-    Microsoft.IO.RecyclableMemoryStream
-
-group Net5
-    Fable.Remoting.Json
-    Fable.Remoting.MsgPack
-    FSharp.Core
-    Microsoft.AspNetCore.SignalR.Protocols.NewtonsoftJson
-    Microsoft.IO.RecyclableMemoryStream
-    
-group Net6
-    Fable.Remoting.Json
-    Fable.Remoting.MsgPack
-    FSharp.Core
-    Microsoft.AspNetCore.SignalR.Protocols.NewtonsoftJson
-    Microsoft.IO.RecyclableMemoryStream
-
-group NetStandard2
+﻿group Net6
     Fable.Remoting.Json
     Fable.Remoting.MsgPack
     FSharp.Core
