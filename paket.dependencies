@@ -23,12 +23,12 @@ group Fable
     nuget FSharp.Core >= 4.7.2 lowest_matching: true
     nuget Zanaptak.TypedCssClasses ~> 0
 
-group Net6
+group Net7
     source https://nuget.org/api/v2
     source https://api.nuget.org/v3/index.json
     
-    condition: net6_0
-    framework: net6
+    condition: net7_0
+    framework: net7
     
     nuget BenchmarkDotNet ~> 0
     nuget BlackFox.CommandLine ~> 1

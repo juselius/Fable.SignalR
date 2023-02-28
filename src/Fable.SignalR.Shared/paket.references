@@ -1,4 +1,4 @@
-﻿group Net6
+﻿group Net7
     Fable.Remoting.Json
     Fable.Remoting.MsgPack
     FSharp.Core
