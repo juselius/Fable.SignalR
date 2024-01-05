@@ -1,0 +1,8 @@
+variables:
+  DEPLOY_NAME: fable.signalr
+  SKIP_TESTS: "true"
+
+include:
+  - project: oceanbox/gitlab-ci
+    ref: v2
+    file: DotnetPackage.gitlab-ci.yml
