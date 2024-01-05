@@ -8,8 +8,8 @@ tags
     fsharp, fable, react, websocket, signalr, saturn
 dependencies
     framework: net6
-        Fable.Remoting.Json ~> LOCKED:Major-Net7
-        FSharp.Core >= LOCKED:Major-Net7
-        Microsoft.AspNetCore.Authentication.JwtBearer ~> LOCKED:Major-Net7
-        Microsoft.AspNetCore.SignalR.Protocols.NewtonsoftJson ~> LOCKED:Major-Net7
-        Saturn >= LOCKED:Major-Net7
+        Fable.Remoting.Json ~> LOCKED:Major-Net8
+        FSharp.Core >= LOCKED:Major-Net8
+        Microsoft.AspNetCore.Authentication.JwtBearer ~> LOCKED:Major-Net8
+        Microsoft.AspNetCore.SignalR.Protocols.NewtonsoftJson ~> LOCKED:Major-Net8
+        Saturn >= LOCKED:Major-Net8

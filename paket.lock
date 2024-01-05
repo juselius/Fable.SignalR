@@ -1,7 +1,7 @@
 
 
 GROUP Fable
-RESTRICTION: || (== net7.0) (== netcoreapp3.1)
+RESTRICTION: || (== net8.0) (== netcoreapp3.1)
 NUGET
   remote: https://www.nuget.org/api/v2
     Fable.AST (4.2)
@@ -556,9 +556,9 @@ NUGET
     System.Windows.Extensions (6.0) - restriction: >= netcoreapp3.1
       System.Drawing.Common (>= 6.0) - restriction: >= netcoreapp3.1
 
-GROUP Net7
+GROUP Net8
 CONDITION: NET7_0
-RESTRICTION: == net7.0
+RESTRICTION: == net8.0
 NUGET
   remote: https://www.nuget.org/api/v2
     BenchmarkDotNet (0.13.5)

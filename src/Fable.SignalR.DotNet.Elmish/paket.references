@@ -1,4 +1,4 @@
-﻿group Net7
+﻿group Net8
     Elmish
     Fable.Remoting.Json
     Fable.Remoting.MsgPack
