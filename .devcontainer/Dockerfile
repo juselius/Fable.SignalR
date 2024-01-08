@@ -16,6 +16,9 @@ RUN apt-get autoremove -y \
     && apt-get clean -y \
     && rm -rf /var/lib/apt/lists/*
 
+# Install dotnet tools
+RUN dotnet tool install paket -g
+
 # Trouble brewing
 RUN rm /etc/ssl/openssl.cnf
 
