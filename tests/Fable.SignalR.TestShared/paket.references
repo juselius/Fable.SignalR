@@ -1,8 +1,8 @@
-﻿group NetCoreApp3
-    FSharp.Core
-
-group Net5
-	FSharp.Core
-
-group Net6
-	FSharp.Core
+﻿# group NetCoreApp3
+#     FSharp.Core
+#
+# group Net5
+# 	FSharp.Core
+#
+# group Net6
+# 	FSharp.Core

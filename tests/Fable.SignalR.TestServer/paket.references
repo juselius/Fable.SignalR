@@ -1,19 +1,19 @@
-﻿group NetCoreApp3
-    FSharp.Core
-    FSharp.Control.AsyncSeq
-    Microsoft.AspNetCore.Authentication.JwtBearer
-    Saturn
-    TaskBuilder.fs
-
-group Net5
-	FSharp.Core
-    FSharp.Control.AsyncSeq
-    Microsoft.AspNetCore.Authentication.JwtBearer
-    Saturn
-    TaskBuilder.fs
-
-group Net6
-	FSharp.Core
-    FSharp.Control.AsyncSeq
-    Microsoft.AspNetCore.Authentication.JwtBearer
-    Saturn
+﻿# group NetCoreApp3
+#     FSharp.Core
+#     FSharp.Control.AsyncSeq
+#     Microsoft.AspNetCore.Authentication.JwtBearer
+#     Saturn
+#     TaskBuilder.fs
+# 
+# group Net5
+# 	FSharp.Core
+#     FSharp.Control.AsyncSeq
+#     Microsoft.AspNetCore.Authentication.JwtBearer
+#     Saturn
+#     TaskBuilder.fs
+# 
+# group Net6
+# 	FSharp.Core
+#     FSharp.Control.AsyncSeq
+#     Microsoft.AspNetCore.Authentication.JwtBearer
+#     Saturn

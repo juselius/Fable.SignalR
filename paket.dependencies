@@ -51,7 +51,7 @@ group Net8
     nuget Microsoft.AspNetCore.TestHost ~> 8
     nuget Microsoft.IO.RecyclableMemoryStream ~> 2
     nuget Saturn ~> 0.16.1
-    nuget System.Text.Encodings.Web ~> 6
+    nuget System.Text.Encodings.Web ~> 7
 
 group Tooling
     source https://nuget.org/api/v2

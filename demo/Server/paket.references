@@ -1,8 +1,8 @@
-﻿group Net5
-    Fable.Remoting.Giraffe
-    FSharp.Core
-    FSharp.Control.AsyncSeq
-    FSharp.Data
-    Microsoft.AspNetCore.Authentication.JwtBearer
-    Saturn
-    TaskBuilder.fs
+﻿# group Net5
+#     Fable.Remoting.Giraffe
+#     FSharp.Core
+#     FSharp.Control.AsyncSeq
+#     FSharp.Data
+#     Microsoft.AspNetCore.Authentication.JwtBearer
+#     Saturn
+#     TaskBuilder.fs
