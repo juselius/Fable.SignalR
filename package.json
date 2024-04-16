@@ -8,10 +8,6 @@
   },
   "license": "MIT",
   "author": "Cody Johnson",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/Shmew/Fable.SignalR"
-  },
   "scripts": {
     "build": "webpack -p",
     "demo-server": "npx ./startDemoServer.js",
