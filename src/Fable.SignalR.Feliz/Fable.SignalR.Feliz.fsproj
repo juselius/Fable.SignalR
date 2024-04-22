@@ -1,16 +1,17 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>Library</OutputType>
     <TargetFramework>net8.0</TargetFramework>
+    <Version>1.0.0</Version>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Feliz.fs" />
-    <None Include="paket.references" />
-    <None Include="paket.template" />
+    <Compile Include="Feliz.fs"/>
+    <None Include="paket.references"/>
+    <None Include="paket.template"/>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Fable.SignalR\Fable.SignalR.fsproj" />
+    <ProjectReference Include="..\Fable.SignalR\Fable.SignalR.fsproj"/>
   </ItemGroup>
   <ItemGroup>
     <PackageReference Update="Fable.AST">
@@ -52,8 +53,8 @@
   </ItemGroup>
   <PropertyGroup>
     <NpmDependencies>
-      <NpmPackage Name="@microsoft/signalr" Version="gte 3.1.5 lt 6" ResolutionStrategy="max" />
+      <NpmPackage Name="@microsoft/signalr" Version="gte 3.1.5 lt 6" ResolutionStrategy="max"/>
     </NpmDependencies>
   </PropertyGroup>
-  <Import Project="..\..\.paket\Paket.Restore.targets" />
+  <Import Project="..\..\.paket\Paket.Restore.targets"/>
 </Project>

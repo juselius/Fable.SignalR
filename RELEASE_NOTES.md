@@ -1,3 +1,23 @@
+# Changelog
+
+# 1.0.0 (2024-04-16)
+
+
+### Bug Fixes
+
+* add missing semantic-release dependency ([88a2472](https://gitlab.com/oceanbox/Fable.SignalR/commit/88a2472bf7e6ce7df106d006de3a47fbb2ea5dc7))
+* add paket to devcontainer ([88bc481](https://gitlab.com/oceanbox/Fable.SignalR/commit/88bc4812771a2634df405f61051a597a1bdd9417))
+* disable stale paket references ([1b9eaa0](https://gitlab.com/oceanbox/Fable.SignalR/commit/1b9eaa03dbc619cc2696211bc19009f5ae2022f6))
+* remove repository from package.json, interferes with semrel ([e16a34c](https://gitlab.com/oceanbox/Fable.SignalR/commit/e16a34cef79c445ac845972d43fa5c53c0c3e4ea))
+* upgrade sematic release to 22 ([ef5dfd4](https://gitlab.com/oceanbox/Fable.SignalR/commit/ef5dfd48fbf604bb3ee3fcf803882edadc08a671))
+* upgrade to net7 ([b63c2c2](https://gitlab.com/oceanbox/Fable.SignalR/commit/b63c2c2c47e03876bf5394f99a194dc5b45eb19e))
+
+
+### Features
+
+* add cicd packaing support ([6fb5c37](https://gitlab.com/oceanbox/Fable.SignalR/commit/6fb5c377af69e8d8f75a70949bce1f7fa224a498))
+* ugrade to net8 ([edc0287](https://gitlab.com/oceanbox/Fable.SignalR/commit/edc0287f87aacc85eca6657230356f65beb914fc))
+
 ### 0.11.6 - tbd
 * Add .NET 6 support
 
