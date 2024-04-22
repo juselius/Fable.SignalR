@@ -10,6 +10,8 @@ initializeContext()
 let modules = [
         "Fable.SignalR.Elmish"
         "Fable.SignalR.Saturn"
+        "Fable.SignalR.Shared"
+        "Fable.SignalR.AspNetCore"
     ]
 
 let modPath (m: string) = Path.getFullName $"src/{m}"

@@ -4,7 +4,6 @@
     <OutputType>Library</OutputType>
     <TargetFrameworks>net8.0</TargetFrameworks>
     <IsPackable>true</IsPackable>
-    <PackageId>Fable.SignalR.Saturn.Oceanbox</PackageId>
     <Authors/>
     <Company/>
     <Version>1.0.0</Version>
