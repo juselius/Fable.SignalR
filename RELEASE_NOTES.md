@@ -1,5 +1,12 @@
 # Changelog
 
+# [1.1.0](https://gitlab.com/oceanbox/Fable.SignalR/compare/v1.0.0...v1.1.0) (2024-04-22)
+
+
+### Features
+
+* pack Saturn, update deps, and add Oceanbox to package name ([2fd1305](https://gitlab.com/oceanbox/Fable.SignalR/commit/2fd130593235df132028f3b9888c9e0403a1015a))
+
 # 1.0.0 (2024-04-16)
 
 
