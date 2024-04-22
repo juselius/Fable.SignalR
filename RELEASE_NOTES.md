@@ -1,5 +1,12 @@
 # Changelog
 
+# [1.2.0](https://gitlab.com/oceanbox/Fable.SignalR/compare/v1.1.0...v1.2.0) (2024-04-22)
+
+
+### Features
+
+* pack Shared and AspNetCore, and rm Oceanbox from package name ([3156ef9](https://gitlab.com/oceanbox/Fable.SignalR/commit/3156ef968a493b058cd4a92025d321e171d0fa66))
+
 # [1.1.0](https://gitlab.com/oceanbox/Fable.SignalR/compare/v1.0.0...v1.1.0) (2024-04-22)
 
 
