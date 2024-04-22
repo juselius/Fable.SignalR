@@ -7,11 +7,15 @@ open Helpers
 
 initializeContext()
 
-let srcPath  = Path.getFullName "src/Fable.SignalR.Elmish"
-let libPath  = Some srcPath
+let modules = [
+        "Fable.SignalR.Elmish"
+        "Fable.SignalR.Saturn"
+    ]
 
-let distPath  = Path.getFullName "dist"
-let packPath    = Path.getFullName "packages"
+let modPath (m: string) = Path.getFullName $"src/{m}"
+
+let distPath = Path.getFullName "dist"
+let packPath = Path.getFullName "packages"
 
 Target.create "Clean" (fun _ -> Shell.cleanDir distPath)
 
@@ -21,19 +25,25 @@ Target.create "InstallClient" (fun _ ->
 )
 
 Target.create "Bundle" (fun _ ->
-    run dotnet $"publish -c Release -o \"{distPath}\"" srcPath
+    modules
+    |> List.iter (fun m ->
+        let src = modPath m
+        run dotnet $"publish -c Release -o \"{distPath}/{m}\" -f net8.0" src)
 )
 
 Target.create "BundleDebug" (fun _ ->
-    run dotnet $"publish -c Debug -o \"{distPath}\"" srcPath
+    modules
+    |> List.iter (fun m ->
+        let src = modPath m
+        run dotnet $"publish -c Debug -o \"{distPath}/{m}\" -f net8.0" src)
 )
 
 Target.create "Pack" (fun _ ->
-    match libPath with
-    | Some p -> run dotnet $"pack -c Release -o \"{packPath}\"" p
-    | None -> ()
+    modules
+    |> List.iter (fun m ->
+        let src = modPath m
+        run dotnet $"pack -c Release -o \"{packPath}\"" src)
 )
-
 
 Target.create "Format" (fun _ ->
     run dotnet "fantomas . -r" "src"
