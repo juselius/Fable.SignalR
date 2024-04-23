@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.1](https://gitlab.com/oceanbox/Fable.SignalR/compare/v1.2.0...v1.2.1) (2024-04-23)
+
+
+### Bug Fixes
+
+* add missing Fable.SingalR base package ([e4d9607](https://gitlab.com/oceanbox/Fable.SignalR/commit/e4d960716655d62daa7aa06884aa2b0bd200ae71))
+
 # [1.2.0](https://gitlab.com/oceanbox/Fable.SignalR/compare/v1.1.0...v1.2.0) (2024-04-22)
 
 
