@@ -4,6 +4,9 @@
     <OutputType>Library</OutputType>
     <TargetFramework>net8.0</TargetFramework>
     <Version>1.2.1</Version>
+    <IsPackable>true</IsPackable>
+    <Authors/>
+    <Company/>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Shared.fs"/>
@@ -37,5 +40,8 @@
       <NpmPackage Name="@microsoft/signalr" Version="gte 3.1.5 lt 6" ResolutionStrategy="max"/>
     </NpmDependencies>
   </PropertyGroup>
+  <ItemGroup>
+    <Content Include="*.fsproj; *.fs" PackagePath="fable/"/>
+  </ItemGroup>
   <Import Project="..\..\.paket\Paket.Restore.targets"/>
 </Project>
