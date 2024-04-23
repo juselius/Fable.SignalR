@@ -8,6 +8,7 @@ open Helpers
 initializeContext()
 
 let modules = [
+        "Fable.SignalR"
         "Fable.SignalR.Elmish"
         "Fable.SignalR.Saturn"
         "Fable.SignalR.Shared"
