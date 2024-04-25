@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.2](https://gitlab.com/oceanbox/Fable.SignalR/compare/v1.2.1...v1.2.2) (2024-04-23)
+
+
+### Bug Fixes
+
+* add fs files to nuget for fable ([50dc01b](https://gitlab.com/oceanbox/Fable.SignalR/commit/50dc01bbaf89f813de277d686e4d0c558f13c56a))
+
 ## [1.2.1](https://gitlab.com/oceanbox/Fable.SignalR/compare/v1.2.0...v1.2.1) (2024-04-23)
 
 
