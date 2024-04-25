@@ -18,15 +18,14 @@ module MsgPackProtocol =
     let [<Literal>] private ProtocolVersion = 1
     let [<Literal>] private MaxPayloadSize = 2147483648L
 
-    let private streamManager = 
-        new RecyclableMemoryStreamManager (
-            #if DEBUG
-            GenerateCallStacks = true,
-            ThrowExceptionOnToArray = true,
-            #endif
-
-            AggressiveBufferReturn = true
-        )
+    let private streamManager =
+        let opts = RecyclableMemoryStreamManager.Options()
+        opts.AggressiveBufferReturn <- true
+        #if DEBUG
+        opts.GenerateCallStacks <- true
+        opts.ThrowExceptionOnToArray <- true
+        #endif
+        RecyclableMemoryStreamManager opts
 
     [<AutoOpen>]
     module private MsgHelpers =
@@ -38,28 +37,28 @@ module MsgPackProtocol =
 
             module Server =
                 let private make<'ServerApi,'ServerStreamApi> () =
-                    if typeof<'ServerApi> = oT then 
+                    if typeof<'ServerApi> = oT then
                         raise (InvalidDataException("ServerApi cannot be obj."))
                     if typeof<'ServerStreamApi> = oT then
                         raise (InvalidDataException("ServerStreamApi cannot be obj, if unused it should be unit."))
-                    
+
                     Write.makeSerializer<Msg<unit,'ServerApi,'ServerApi,'ServerStreamApi>>()
 
                 let get<'ServerApi,'ServerStreamApi> () = memoize make<'ServerApi,'ServerStreamApi> ()
 
             module Client =
-                let private make<'ClientApi,'ClientStreamFromApi,'ClientStreamToApi> () = 
-                    if typeof<'ClientApi> = oT then 
+                let private make<'ClientApi,'ClientStreamFromApi,'ClientStreamToApi> () =
+                    if typeof<'ClientApi> = oT then
                         raise (InvalidDataException("ServerApi cannot be obj."))
                     if typeof<'ClientStreamFromApi> = oT then
                         raise (InvalidDataException("ClientStreamFromApi cannot be obj, if unused it should be unit."))
                     if typeof<'ClientStreamToApi> = oT then
                         raise (InvalidDataException("ClientStreamToApi cannot be obj, if unused it should be unit."))
-                    
+
                     Write.makeSerializer<Msg<'ClientStreamFromApi,'ClientApi,unit,'ClientStreamToApi>>()
 
                 let get<'ClientApi,'ClientStreamFromApi,'ClientStreamToApi> () = memoize make<'ClientApi,'ClientStreamFromApi,'ClientStreamToApi> ()
-                
+
         [<RequireQualifiedAccess>]
         module Headers =
             let private toOptInner (iDict: Collections.Generic.IDictionary<_,_>) =
@@ -93,7 +92,7 @@ module MsgPackProtocol =
             let toOpt (s: string) =
                 if String.IsNullOrEmpty s then None
                 else Some s
-                
+
         [<RequireQualifiedAccess>]
         module Obj =
             let inline toOptAs<'T> (o: obj) =
@@ -105,7 +104,7 @@ module MsgPackProtocol =
                     |> sprintf "Unsupported message type: %s"
                     |> InvalidOperationException
                     |> raise
-                    
+
         [<RequireQualifiedAccess>]
         module Array =
             let inline elementsAs<'T> (o: obj []) =
@@ -118,8 +117,8 @@ module MsgPackProtocol =
                     sprintf "Writing messages above 2GB is not supported."
                     |> InvalidOperationException
                     |> raise
-            
-                use msgMs = 
+
+                use msgMs =
                     #if DEBUG
                     streamManager.GetStream("Array.getMessageBytesWithPrependedLength")
                     #else
@@ -127,7 +126,7 @@ module MsgPackProtocol =
                     #endif
 
                 Write.writeUInt64 (uint64 ms.Length) msgMs
-                
+
                 let out = Array.zeroCreate (ms.Length + msgMs.Length |> int)
 
                 Array.Copy (msgMs.GetBuffer(), 0L, out, 0L, msgMs.Length)
@@ -148,7 +147,7 @@ module MsgPackProtocol =
                     try
                         let reader = Read.Reader(input.ToArray())
                         let len = reader.Read typeof<uint32> |> unbox<uint32> |> int64
-                        
+
                         input <- input.Slice(len + 1L)
 
                         if len > MaxPayloadSize then
@@ -169,9 +168,9 @@ module MsgPackProtocol =
                                     |> Headers.set headers :> HubMessage
                                 | Msg.InvokeInvocation (headers, invocationId, target, msg, invokeId, streamIds) ->
                                     let args = [| box msg; box invokeId |]
-                        
+
                                     match invocationId with
-                                    | Some invocationId -> 
+                                    | Some invocationId ->
                                         match streamIds with
                                         | Some streamIds -> InvocationMessage(invocationId, target, args, streamIds)
                                         | None -> InvocationMessage(invocationId, target, args)
@@ -228,18 +227,18 @@ module MsgPackProtocol =
                     match Array.head msg.Arguments with
                     | :? InvokeArg<'ServerApi> ->
                         Msg<unit,'ServerApi,'ServerApi,'ServerStreamApi>.InvocationExplicit (
-                            Headers.toOpt msg.Headers, 
-                            String.toOpt msg.InvocationId, 
-                            msg.Target, 
-                            Array.elementsAs msg.Arguments, 
+                            Headers.toOpt msg.Headers,
+                            String.toOpt msg.InvocationId,
+                            msg.Target,
+                            Array.elementsAs msg.Arguments,
                             StreamIds.toOpt msg.StreamIds
                         )
                     | :? 'ServerApi ->
                         Msg<unit,'ServerApi,'ServerApi,'ServerStreamApi>.Invocation (
-                            Headers.toOpt msg.Headers, 
-                            String.toOpt msg.InvocationId, 
-                            msg.Target, 
-                            Array.elementsAs msg.Arguments, 
+                            Headers.toOpt msg.Headers,
+                            String.toOpt msg.InvocationId,
+                            msg.Target,
+                            Array.elementsAs msg.Arguments,
                             StreamIds.toOpt msg.StreamIds
                         )
                     | arg ->
@@ -251,35 +250,35 @@ module MsgPackProtocol =
                         |> raise
                 | :? StreamItemMessage as msg ->
                     Msg<unit,'ServerApi,'ServerApi,'ServerStreamApi>.StreamItem (
-                        Headers.toOpt msg.Headers, 
-                        String.toOpt msg.InvocationId, 
+                        Headers.toOpt msg.Headers,
+                        String.toOpt msg.InvocationId,
                         unbox<'ServerStreamApi> msg.Item
                     )
                 | :? CompletionMessage as msg ->
                     Msg<unit,'ServerApi,'ServerApi,'ServerStreamApi>.Completion (
-                        Headers.toOpt msg.Headers, 
-                        msg.InvocationId, 
-                        String.toOpt msg.Error, 
+                        Headers.toOpt msg.Headers,
+                        msg.InvocationId,
+                        String.toOpt msg.Error,
                         Obj.toOptAs msg.Result
                     )
                 | :? StreamInvocationMessage as msg ->
                     Msg<unit,'ServerApi,'ServerApi,'ServerStreamApi>.StreamInvocation (
-                        Headers.toOpt msg.Headers, 
-                        msg.InvocationId, 
-                        msg.Target, 
-                        Array.elementsAs msg.Arguments, 
+                        Headers.toOpt msg.Headers,
+                        msg.InvocationId,
+                        msg.Target,
+                        Array.elementsAs msg.Arguments,
                         StreamIds.toOpt msg.StreamIds
                     )
                 | :? CancelInvocationMessage as msg ->
                     Msg<unit,'ServerApi,'ServerApi,'ServerStreamApi>.CancelInvocation (
-                        Headers.toOpt msg.Headers, 
+                        Headers.toOpt msg.Headers,
                         String.toOpt msg.InvocationId
                     )
-                | :? PingMessage -> 
+                | :? PingMessage ->
                     Msg<unit,'ServerApi,'ServerApi,'ServerStreamApi>.Ping
-                | :? CloseMessage as msg -> 
+                | :? CloseMessage as msg ->
                     Msg<unit,'ServerApi,'ServerApi,'ServerStreamApi>.Close (
-                        String.toOpt msg.Error, 
+                        String.toOpt msg.Error,
                         Some msg.AllowReconnect
                     )
                 | _ ->
@@ -325,9 +324,9 @@ module MsgPackProtocol =
                                     |> Headers.set headers :> HubMessage
                                 | Msg.InvokeInvocation (headers, invocationId, target, msg, invokeId, streamIds) ->
                                     let args = [| box msg; box invokeId |]
-                        
+
                                     match invocationId with
-                                    | Some invocationId -> 
+                                    | Some invocationId ->
                                         match streamIds with
                                         | Some streamIds -> InvocationMessage(invocationId, target, args, streamIds)
                                         | None -> InvocationMessage(invocationId, target, args)
@@ -386,19 +385,19 @@ module MsgPackProtocol =
                         match Array.head msg.Arguments with
                         | :? 'ClientApi as fstArg when msg.Arguments.Length = 2 && msg.Arguments.[1].GetType() = typeof<System.Guid> ->
                             Msg<'ClientStreamFromApi,'ClientApi,unit,'ClientStreamToApi>.InvokeInvocation (
-                                Headers.toOpt msg.Headers, 
-                                String.toOpt msg.InvocationId, 
-                                msg.Target, 
+                                Headers.toOpt msg.Headers,
+                                String.toOpt msg.InvocationId,
+                                msg.Target,
                                 fstArg,
                                 downcast msg.Arguments.[1],
                                 StreamIds.toOpt msg.StreamIds
                             )
                         | :? InvokeArg<'ClientApi> ->
                             Msg<'ClientStreamFromApi,'ClientApi,unit,'ClientStreamToApi>.InvocationExplicit (
-                                Headers.toOpt msg.Headers, 
-                                String.toOpt msg.InvocationId, 
-                                msg.Target, 
-                                Array.elementsAs msg.Arguments, 
+                                Headers.toOpt msg.Headers,
+                                String.toOpt msg.InvocationId,
+                                msg.Target,
+                                Array.elementsAs msg.Arguments,
                                 StreamIds.toOpt msg.StreamIds
                             )
                         | arg ->
@@ -411,10 +410,10 @@ module MsgPackProtocol =
                     | HubMethod.Send
                     | HubMethod.StreamTo ->
                         Msg<'ClientStreamFromApi,'ClientApi,unit,'ClientStreamToApi>.Invocation (
-                            Headers.toOpt msg.Headers, 
-                            String.toOpt msg.InvocationId, 
-                            msg.Target, 
-                            Array.elementsAs msg.Arguments, 
+                            Headers.toOpt msg.Headers,
+                            String.toOpt msg.InvocationId,
+                            msg.Target,
+                            Array.elementsAs msg.Arguments,
                             StreamIds.toOpt msg.StreamIds
                         )
                     | target ->
@@ -423,35 +422,35 @@ module MsgPackProtocol =
                         |> raise
                 | :? StreamItemMessage as msg ->
                     Msg<'ClientStreamFromApi,'ClientApi,unit,'ClientStreamToApi>.StreamItem (
-                        Headers.toOpt msg.Headers, 
-                        String.toOpt msg.InvocationId, 
+                        Headers.toOpt msg.Headers,
+                        String.toOpt msg.InvocationId,
                         downcast msg.Item
                     )
                 | :? CompletionMessage as msg ->
                     Msg<'ClientStreamFromApi,'ClientApi,unit,'ClientStreamToApi>.Completion (
-                        Headers.toOpt msg.Headers, 
-                        msg.InvocationId, 
-                        String.toOpt msg.Error, 
+                        Headers.toOpt msg.Headers,
+                        msg.InvocationId,
+                        String.toOpt msg.Error,
                         Obj.toOptAs msg.Result
                     )
                 | :? StreamInvocationMessage as msg ->
                     Msg<'ClientStreamFromApi,'ClientApi,unit,'ClientStreamToApi>.StreamInvocation (
-                        Headers.toOpt msg.Headers, 
-                        msg.InvocationId, 
-                        msg.Target, 
-                        Array.elementsAs msg.Arguments, 
+                        Headers.toOpt msg.Headers,
+                        msg.InvocationId,
+                        msg.Target,
+                        Array.elementsAs msg.Arguments,
                         StreamIds.toOpt msg.StreamIds
                     )
                 | :? CancelInvocationMessage as msg ->
                     Msg<'ClientStreamFromApi,'ClientApi,unit,'ClientStreamToApi>.CancelInvocation (
-                        Headers.toOpt msg.Headers, 
+                        Headers.toOpt msg.Headers,
                         String.toOpt msg.InvocationId
                     )
-                | :? PingMessage -> 
+                | :? PingMessage ->
                     Msg<'ClientStreamFromApi,'ClientApi,unit,'ClientStreamToApi>.Ping
-                | :? CloseMessage as msg -> 
+                | :? CloseMessage as msg ->
                     Msg<'ClientStreamFromApi,'ClientApi,unit,'ClientStreamToApi>.Close (
-                        String.toOpt msg.Error, 
+                        String.toOpt msg.Error,
                         Some msg.AllowReconnect
                     )
                 | _ ->
@@ -473,7 +472,7 @@ module MsgPackProtocol =
 
             member _.IsVersionSupported version = version = ProtocolVersion
 
-            member _.WriteMessage (message: HubMessage, output: IBufferWriter<byte>) = 
+            member _.WriteMessage (message: HubMessage, output: IBufferWriter<byte>) =
                 output.Write(ReadOnlySpan<byte>(Client.Write.message<'ClientApi,'ClientStreamFromApi,'ClientStreamToApi> message))
 
             member _.TryParseMessage (input: byref<ReadOnlySequence<byte>>, _: IInvocationBinder, message: byref<HubMessage>) =
@@ -491,7 +490,7 @@ module MsgPackProtocol =
 
             member _.IsVersionSupported version = version = ProtocolVersion
 
-            member _.WriteMessage (message: HubMessage, output: IBufferWriter<byte>) = 
+            member _.WriteMessage (message: HubMessage, output: IBufferWriter<byte>) =
                 output.Write(ReadOnlySpan<byte>(Server.Write.message<'ServerApi,'ServerStreamApi> message))
 
             member _.TryParseMessage (input: byref<ReadOnlySequence<byte>>, _: IInvocationBinder, message: byref<HubMessage>) =
