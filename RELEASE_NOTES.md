@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.2.3](https://gitlab.com/oceanbox/Fable.SignalR/compare/v1.2.2...v1.2.3) (2024-04-25)
+
+
+### Bug Fixes
+
+* fix usage of newer RecyclableMemoryStream ([45fc52b](https://gitlab.com/oceanbox/Fable.SignalR/commit/45fc52b51033ef656997c784f5bd3aa01e6b6f94))
+* update dependencies for Fable 4 et al. ([fdad762](https://gitlab.com/oceanbox/Fable.SignalR/commit/fdad762351ef729dbb0fbce5e2d04be5c3ed7d65))
+
 ## [1.2.2](https://gitlab.com/oceanbox/Fable.SignalR/compare/v1.2.1...v1.2.2) (2024-04-23)
 
 
