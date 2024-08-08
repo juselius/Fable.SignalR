@@ -14,16 +14,16 @@ module SignalRExtension =
         [<EditorBrowsable(EditorBrowsableState.Never);RequireQualifiedAccess>]
         module State =
             type Empty = | Init
-    
+
             type Endpoint = | Value of string
 
-            type Send<'ClientApi,'ServerApi when 'ClientApi : not struct and 'ServerApi : not struct> = 
+            type Send<'ClientApi,'ServerApi when 'ClientApi : not struct and 'ServerApi : not struct> =
                 | Value of endpoint:string * send:('ClientApi -> FableHub<'ClientApi,'ServerApi> -> Task)
 
             type Settings<'ClientApi,'ClientStreamToApi,'ClientStreamFromApi,'ServerApi,'ServerStreamApi
                 when 'ClientApi : not struct and 'ServerApi : not struct> =
-                | HasStreamBoth of SignalR.Settings<'ClientApi,'ServerApi> * 
-                                    ('ClientStreamFromApi -> FableHub<'ClientApi,'ServerApi> -> IAsyncEnumerable<'ServerStreamApi>) * 
+                | HasStreamBoth of SignalR.Settings<'ClientApi,'ServerApi> *
+                                    ('ClientStreamFromApi -> FableHub<'ClientApi,'ServerApi> -> IAsyncEnumerable<'ServerStreamApi>) *
                                     (IAsyncEnumerable<'ClientStreamToApi> -> FableHub<'ClientApi,'ServerApi> -> Task)
                 | HasStreamFrom of SignalR.Settings<'ClientApi,'ServerApi> * ('ClientStreamFromApi -> FableHub<'ClientApi,'ServerApi> -> IAsyncEnumerable<'ServerStreamApi>)
                 | HasStreamTo of SignalR.Settings<'ClientApi,'ServerApi> * (IAsyncEnumerable<'ClientStreamToApi> -> FableHub<'ClientApi,'ServerApi> -> Task)
@@ -39,25 +39,25 @@ module SignalRExtension =
         type SettingsBuilder () =
             member _.Yield(_) =
                 State.Empty.Init
-    
+
             /// The endpoint used to communicate with the hub.
             [<CustomOperation("endpoint")>]
-            member _.Endpoint (State.Empty.Init, value: string) = 
+            member _.Endpoint (State.Empty.Init, value: string) =
                 State.Endpoint.Value value
-    
+
             /// Handler for client message sends.
             [<CustomOperation("send")>]
-            member _.Send (State.Endpoint.Value state, f: 'a -> FableHub<'a,'d> -> #Task) = 
+            member _.Send (State.Endpoint.Value state, f: 'a -> FableHub<'a,'d> -> #Task) =
 
                 let f = (fun msg hub -> (f msg hub) :> Task)
 
                 let send : State.Send<_,_> = State.Send.Value(state, f)
 
                 send
-                
+
             /// Handler for client invocations.
             [<CustomOperation("invoke")>]
-            member _.Invoke (State.Send.Value (endpoint,send), f: 'a -> FableHub -> Task<'b>) = 
+            member _.Invoke (State.Send.Value (endpoint,send), f: 'a -> FableHub -> Task<'b>) =
 
                 let settings : SignalR.Settings<'a,'b> =
                     { EndpointPattern = endpoint
@@ -66,7 +66,7 @@ module SignalRExtension =
                       Config = None }
 
                 State.Settings.NoStream settings
-                
+
             /// Handler for streaming to the client.
             [<CustomOperation("stream_from")>]
             member _.StreamFrom (state: State.Settings<_,_,_,_,_>, f) =
@@ -76,7 +76,7 @@ module SignalRExtension =
                 | State.HasStreamFrom(settings,_) -> State.Settings.HasStreamFrom(settings, f)
                 | State.HasStreamTo(settings,streamTo) -> State.Settings.HasStreamBoth(settings, f, streamTo)
                 | State.NoStream(settings) -> State.Settings.HasStreamFrom(settings, f)
-                
+
             ///  Handler for streaming from the client.
             [<CustomOperation("stream_to")>]
             member _.StreamTo(state: State.Settings<_,_,_,_,_>, f: IAsyncEnumerable<_> -> FableHub<_,_> -> #Task) =
@@ -88,7 +88,7 @@ module SignalRExtension =
                 | State.HasStreamFrom(settings,streamFrom) -> State.Settings.HasStreamBoth(settings, streamFrom, f)
                 | State.HasStreamTo(settings,_) -> State.Settings.HasStreamTo(settings, f)
                 | State.NoStream(settings) -> State.Settings.HasStreamTo(settings, f)
-                
+
             /// Disable app.UseRouting() configuration.
             ///
             /// *You must configure this yourself if you do this!*
@@ -114,17 +114,17 @@ module SignalRExtension =
             /// Enable MessagePack binary (de)serialization instead of JSON.
             [<CustomOperation("use_messagepack")>]
             member _.MessagePack (state: State.Settings<_,_,_,_,_>) =
-                state.MapSettings <| fun state ->  
+                state.MapSettings <| fun state ->
                     { state with
                         Config =
                             { SignalR.Settings.GetConfigOrDefault state with
                                 UseMessagePack = true }
                             |> Some }
-            
+
             /// Configure the SignalR server.
             [<CustomOperation("use_server_builder")>]
             member _.UseServerBuilder (state: State.Settings<_,_,_,_,_>, f: ISignalRServerBuilder -> ISignalRServerBuilder) =
-                state.MapSettings <| fun state ->  
+                state.MapSettings <| fun state ->
                     { state with
                         Config =
                             { SignalR.Settings.GetConfigOrDefault state with
@@ -170,7 +170,7 @@ module SignalRExtension =
                             { SignalR.Settings.GetConfigOrDefault state with
                                 HubOptions = Some f }
                             |> Some }
-    
+
             /// Adds a logging filter with the given LogLevel.
             [<CustomOperation("with_log_level")>]
             member _.LogLevel (state: State.Settings<_,_,_,_,_>, logLevel: Microsoft.Extensions.Logging.LogLevel) =
@@ -184,30 +184,30 @@ module SignalRExtension =
             /// Called when a new connection is established with the hub.
             [<CustomOperation("with_on_connected")>]
             member _.OnConnected (state: State.Settings<_,_,_,_,_>, f: FableHub<'ClientApi,'ServerApi> -> Task<unit>) =
-                state.MapSettings <| fun state -> 
+                state.MapSettings <| fun state ->
                     { state with
                         Config =
                             { SignalR.Settings.GetConfigOrDefault state with
                                 OnConnected = Some f }
                             |> Some }
-    
+
             /// Called when a connection with the hub is terminated.
             [<CustomOperation("with_on_disconnected")>]
             member _.OnDisconnected (state: State.Settings<_,_,_,_,_>, f: exn -> FableHub<'ClientApi,'ServerApi> -> Task<unit>) =
-                state.MapSettings <| fun state ->  
+                state.MapSettings <| fun state ->
                     { state with
                         Config =
                             { SignalR.Settings.GetConfigOrDefault state with
                                 OnDisconnected = Some f }
                             |> Some }
-                
-            member _.Run (state: State.Settings<_,_,_,_,_>) = 
+
+            member _.Run (state: State.Settings<_,_,_,_,_>) =
                 match state with
                 | State.HasStreamBoth(settings,streamFrom,streamTo) -> settings, Some streamFrom, Some streamTo
                 | State.HasStreamFrom(settings,stream) -> settings, Some stream, None
                 | State.HasStreamTo(settings,stream) -> settings, None, Some stream
                 | State.NoStream settings -> settings, None, None
-    
+
     [<AutoOpen>]
     module Builder =
         /// Creates a SignalR hub configuration.
@@ -218,10 +218,10 @@ module SignalRExtension =
         /// Adds a SignalR hub into the application.
         [<CustomOperation("use_signalr")>]
         member this.UseSignalR
-            (state, settings: SignalR.Settings<'ClientApi,'ServerApi> * 
+            (state, settings: SignalR.Settings<'ClientApi,'ServerApi> *
                 ('ClientStreamApi -> FableHub<'ClientApi,'ServerApi> -> IAsyncEnumerable<'ServerStreamApi>) option *
                 (IAsyncEnumerable<'ClientStreamToApi> -> FableHub<'ClientApi,'ServerApi> -> Task) option) =
-            
+
             let settings,streamFrom,streamTo = settings
 
             match streamFrom,streamTo with
@@ -237,7 +237,7 @@ module SignalRExtension =
             | _ ->
                 this.ServiceConfig(state, fun services -> services.AddSignalR(settings))
                 |> fun state -> this.AppConfig(state, fun app -> app.UseSignalR(settings))
-            |> fun state -> 
+            |> fun state ->
                 settings.Config
                 |> Option.bind(fun o -> o.LogLevel)
                 |> function

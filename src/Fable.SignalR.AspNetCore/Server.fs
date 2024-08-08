@@ -1,9 +1,6 @@
 ﻿namespace Fable.SignalR
 
 open Fable.SignalR.Shared
-#if !NET6_0_OR_GREATER
-open FSharp.Control.Tasks.V2
-#endif
 open Microsoft.AspNetCore.Builder
 open Microsoft.AspNetCore.SignalR
 open Microsoft.AspNetCore.Authorization
