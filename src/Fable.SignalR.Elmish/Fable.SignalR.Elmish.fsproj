@@ -7,10 +7,10 @@
     <PackageId>Fable.SignalR.Oceanbox</PackageId>
     <Authors/>
     <Company/>
-    <Version>1.2.3</Version>
+    <Version>1.3.0</Version>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Elmish.fs" />
+    <Compile Include="Elmish.fs"/>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Fable.SignalR\Fable.SignalR.fsproj"/>
@@ -24,7 +24,7 @@
     <Content Include="*.fsproj; *.fs" PackagePath="fable/"/>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Fable.Elmish" Version="4.2.0" />
-    <PackageReference Include="Fable.Promise" Version="3.2.0" />
+    <PackageReference Include="Fable.Elmish" Version="4.2.0"/>
+    <PackageReference Include="Fable.Promise" Version="3.2.0"/>
   </ItemGroup>
 </Project>

@@ -1,5 +1,14 @@
 # Changelog
 
+# [1.3.0](https://gitlab.com/oceanbox/Fable.SignalR/compare/v1.2.3...v1.3.0) (2024-08-08)
+
+
+### Features
+
+* add support redis backplane ([06e14d5](https://gitlab.com/oceanbox/Fable.SignalR/commit/06e14d5dc1643557ed14fbba99b41daedbf3d24f))
+* get rid of paket which is causing a world of pain ([e9712dc](https://gitlab.com/oceanbox/Fable.SignalR/commit/e9712dc86dddf7b4a589e60d76a4e51f34cf4391))
+* get rid of paket which is causing a world of pain (take 2) ([fd67a23](https://gitlab.com/oceanbox/Fable.SignalR/commit/fd67a235c8bdd6ebc9fa24dbfefeb3526afab81a))
+
 ## [1.2.3](https://gitlab.com/oceanbox/Fable.SignalR/compare/v1.2.2...v1.2.3) (2024-04-25)
 
 

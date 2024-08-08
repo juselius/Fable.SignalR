@@ -3,17 +3,17 @@
   <PropertyGroup>
     <OutputType>Library</OutputType>
     <TargetFrameworks>net8.0</TargetFrameworks>
-    <Version>1.2.3</Version>
+    <Version>1.3.0</Version>
     <IsPackable>true</IsPackable>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Types.fs" />
-    <Compile Include="MemoryCache.fs" />
-    <Compile Include="MsgPack.fs" />
+    <Compile Include="Types.fs"/>
+    <Compile Include="MemoryCache.fs"/>
+    <Compile Include="MsgPack.fs"/>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Fable.Remoting.MsgPack" Version="1.24.0" />
-    <PackageReference Include="Microsoft.AspNetCore.SignalR.Protocols.NewtonsoftJson" Version="8.0.7" />
-    <PackageReference Include="Microsoft.IO.RecyclableMemoryStream" Version="3.0.1" />
+    <PackageReference Include="Fable.Remoting.MsgPack" Version="1.24.0"/>
+    <PackageReference Include="Microsoft.AspNetCore.SignalR.Protocols.NewtonsoftJson" Version="8.0.7"/>
+    <PackageReference Include="Microsoft.IO.RecyclableMemoryStream" Version="3.0.1"/>
   </ItemGroup>
 </Project>
