@@ -1,5 +1,0 @@
-﻿group Fable
-    Fable.Core
-    Fable.Promise
-    Feliz
-    FSharp.Core
