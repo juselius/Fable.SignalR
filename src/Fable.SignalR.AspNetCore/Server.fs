@@ -4,6 +4,7 @@ open Fable.SignalR.Shared
 open Microsoft.AspNetCore.Builder
 open Microsoft.AspNetCore.SignalR
 open Microsoft.AspNetCore.Authorization
+open Microsoft.AspNetCore.SignalR.StackExchangeRedis
 open Microsoft.Extensions.DependencyInjection
 open System
 open System.Collections.Generic
@@ -585,7 +586,9 @@ module SignalR =
           /// Enable MessagePack binary (de)serialization instead of JSON.
           UseMessagePack: bool
           /// Configure the SignalR server.
-          UseServerBuilder: (ISignalRServerBuilder -> ISignalRServerBuilder) option }
+          UseServerBuilder: (ISignalRServerBuilder -> ISignalRServerBuilder) option 
+          UseRedis: (string * System.Action<RedisOptions>) option
+        }
 
         /// Creates an empty record.
         static member Default () =
@@ -599,7 +602,9 @@ module SignalR =
               OnConnected = None
               OnDisconnected = None
               UseMessagePack = false
-              UseServerBuilder = None }
+              UseServerBuilder = None
+              UseRedis = None
+            }
 
     [<RequireQualifiedAccess>]
     module internal Config =

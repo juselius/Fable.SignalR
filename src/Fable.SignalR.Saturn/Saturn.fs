@@ -1,5 +1,9 @@
 ﻿namespace Fable.SignalR
 
+open System
+open Microsoft.AspNetCore.SignalR.StackExchangeRedis
+open StackExchange.Redis
+
 [<AutoOpen>]
 module SignalRExtension =
     open Fable.SignalR
@@ -200,6 +204,15 @@ module SignalRExtension =
                             { SignalR.Settings.GetConfigOrDefault state with
                                 OnDisconnected = Some f }
                             |> Some }
+                    
+            [<CustomOperation("use_redis")>]
+            member _.UseRedis (state: State.Settings<_,_,_,_,_>, redis: string * System.Action<RedisOptions>) =
+                state.MapSettings <| fun state ->
+                    { state with
+                        Config =
+                            { SignalR.Settings.GetConfigOrDefault state with
+                                UseRedis = Some redis }
+                            |> Some }
 
             member _.Run (state: State.Settings<_,_,_,_,_>) =
                 match state with
@@ -220,9 +233,10 @@ module SignalRExtension =
         member this.UseSignalR
             (state, settings: SignalR.Settings<'ClientApi,'ServerApi> *
                 ('ClientStreamApi -> FableHub<'ClientApi,'ServerApi> -> IAsyncEnumerable<'ServerStreamApi>) option *
-                (IAsyncEnumerable<'ClientStreamToApi> -> FableHub<'ClientApi,'ServerApi> -> Task) option) =
+                (IAsyncEnumerable<'ClientStreamToApi> -> FableHub<'ClientApi,'ServerApi> -> Task) option *
+                (string * Action<RedisOptions>) option) =
 
-            let settings,streamFrom,streamTo = settings
+            let settings, streamFrom, streamTo, redis = settings
 
             match streamFrom,streamTo with
             | Some streamFrom, Some streamTo ->
