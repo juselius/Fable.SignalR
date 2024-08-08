@@ -1,7 +1,0 @@
-﻿group Net8
-    Elmish
-    Fable.Remoting.Json
-    Fable.Remoting.MsgPack
-    FSharp.Core
-    Microsoft.AspNetCore.SignalR.Client
-    Microsoft.AspNetCore.SignalR.Protocols.NewtonsoftJson

@@ -1,6 +1,0 @@
-﻿group Net8
-    Fable.Remoting.Json
-    FSharp.Core
-    Microsoft.AspNetCore.Authentication.JwtBearer
-    Microsoft.AspNetCore.SignalR.Protocols.NewtonsoftJson
-    Saturn
