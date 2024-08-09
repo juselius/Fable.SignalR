@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.1](https://gitlab.com/oceanbox/Fable.SignalR/compare/v1.3.0...v1.3.1) (2024-08-09)
+
+
+### Bug Fixes
+
+* fix package names to avoid version conflicts ([f2c7879](https://gitlab.com/oceanbox/Fable.SignalR/commit/f2c7879fe0efb68a88f6baff90aec5345ac081a1))
+
 # [1.3.0](https://gitlab.com/oceanbox/Fable.SignalR/compare/v1.2.3...v1.3.0) (2024-08-08)
 
 
