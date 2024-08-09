@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.2](https://gitlab.com/oceanbox/Fable.SignalR/compare/v1.3.1...v1.3.2) (2024-08-09)
+
+
+### Bug Fixes
+
+* remove leftover redis argument in saturn application builder ([2d79096](https://gitlab.com/oceanbox/Fable.SignalR/commit/2d79096f51a203005c9a2fe864a88ecddba1e096))
+
 ## [1.3.1](https://gitlab.com/oceanbox/Fable.SignalR/compare/v1.3.0...v1.3.1) (2024-08-09)
 
 
