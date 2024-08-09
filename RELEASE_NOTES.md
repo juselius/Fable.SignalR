@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.3](https://gitlab.com/oceanbox/Fable.SignalR/compare/v1.3.2...v1.3.3) (2024-08-09)
+
+
+### Bug Fixes
+
+* make redis options optional ([ef81f75](https://gitlab.com/oceanbox/Fable.SignalR/commit/ef81f7507155128e11117cc76ff6917e68624589))
+
 ## [1.3.2](https://gitlab.com/oceanbox/Fable.SignalR/compare/v1.3.1...v1.3.2) (2024-08-09)
 
 
