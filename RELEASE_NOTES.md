@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.4](https://gitlab.com/oceanbox/Fable.SignalR/compare/v1.3.3...v1.3.4) (2024-08-09)
+
+
+### Bug Fixes
+
+* add debug logging to UseRedis ([098528a](https://gitlab.com/oceanbox/Fable.SignalR/commit/098528aa36ab0bab6f355bba9348fd8e90354071))
+
 ## [1.3.3](https://gitlab.com/oceanbox/Fable.SignalR/compare/v1.3.2...v1.3.3) (2024-08-09)
 
 
