@@ -233,10 +233,9 @@ module SignalRExtension =
         member this.UseSignalR
             (state, settings: SignalR.Settings<'ClientApi,'ServerApi> *
                 ('ClientStreamApi -> FableHub<'ClientApi,'ServerApi> -> IAsyncEnumerable<'ServerStreamApi>) option *
-                (IAsyncEnumerable<'ClientStreamToApi> -> FableHub<'ClientApi,'ServerApi> -> Task) option *
-                (string * Action<RedisOptions>) option) =
+                (IAsyncEnumerable<'ClientStreamToApi> -> FableHub<'ClientApi,'ServerApi> -> Task) option) =
 
-            let settings, streamFrom, streamTo, redis = settings
+            let settings, streamFrom, streamTo = settings
 
             match streamFrom,streamTo with
             | Some streamFrom, Some streamTo ->
