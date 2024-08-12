@@ -1,5 +1,12 @@
 # Changelog
 
+# [1.4.0](https://gitlab.com/oceanbox/Fable.SignalR/compare/v1.3.4...v1.4.0) (2024-08-12)
+
+
+### Features
+
+* support Stateful Reconnects on server and client ([f3ddbbc](https://gitlab.com/oceanbox/Fable.SignalR/commit/f3ddbbc2594901a609124144ed4f8de57a1f492a))
+
 ## [1.3.4](https://gitlab.com/oceanbox/Fable.SignalR/compare/v1.3.3...v1.3.4) (2024-08-09)
 
 
