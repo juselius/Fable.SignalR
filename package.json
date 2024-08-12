@@ -19,7 +19,7 @@
     "test": "jest"
   },
   "dependencies": {
-    "@microsoft/signalr": "^5",
+    "@microsoft/signalr": "8.0.7",
     "plotly.js": "^1",
     "react": "^16",
     "react-dom": "^16",
@@ -30,6 +30,10 @@
     "@babel/plugin-transform-modules-commonjs": "^7",
     "@babel/plugin-transform-regenerator": "^7",
     "@babel/preset-env": "^7",
+    "@semantic-release/changelog": "^6.0.1",
+    "@semantic-release/exec": "^6.0.3",
+    "@semantic-release/git": "^10.0.1",
+    "@semantic-release/gitlab": "^7.0.4",
     "@sinonjs/fake-timers": "^6",
     "@testing-library/jest-dom": "^5",
     "@testing-library/react": "^10",
@@ -59,16 +63,12 @@
     "sass": "^1",
     "sass-loader": "^7",
     "save": "^2",
+    "semantic-release": "^22.0.2",
+    "semantic-release-dotnet": "^1.0.0",
     "style-loader": "^1",
     "webpack": "^4",
     "webpack-cli": "^3",
-    "webpack-dev-server": "^3",
-    "semantic-release": "^22.0.2",
-    "@semantic-release/changelog": "^6.0.1",
-    "@semantic-release/exec": "^6.0.3",
-    "@semantic-release/git": "^10.0.1",
-    "@semantic-release/gitlab": "^7.0.4",
-    "semantic-release-dotnet": "^1.0.0"
+    "webpack-dev-server": "^3"
   },
   "private": true,
   "jest": {

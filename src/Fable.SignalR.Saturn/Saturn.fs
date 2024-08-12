@@ -8,6 +8,7 @@ open StackExchange.Redis
 module SignalRExtension =
     open Fable.SignalR
     open Microsoft.AspNetCore.Builder
+    open Microsoft.AspNetCore.Http
     open Microsoft.AspNetCore.SignalR
     open Microsoft.Extensions.Logging
     open System.Collections.Generic
@@ -206,14 +207,12 @@ module SignalRExtension =
                             |> Some }
                     
             [<CustomOperation("use_redis")>]
-            member _.UseRedis (state: State.Settings<_,_,_,_,_>, connSting: string,  ?opts: System.Action<RedisOptions>, ?logger: ILogger) =
+            member _.UseRedis (state: State.Settings<_,_,_,_,_>, connSting: string,  ?opts: System.Action<RedisOptions>) =
                 let redis =
                     match opts with
                     | Some o -> connSting, o
                     | None -> connSting, ignore
                     |> Some
-                if logger.IsSome then
-                    logger.Value.LogDebug "Using redis for SignalR scaleout"
                 state.MapSettings <| fun state ->
                     { state with
                         Config =
@@ -221,6 +220,15 @@ module SignalRExtension =
                                 UseRedis = redis }
                             |> Some }
 
+            [<CustomOperation("with_hub_connection_options")>]
+            member _.HubConnectionOptions (state: State.Settings<_,_,_,_,_>, f: Connections.HttpConnectionDispatcherOptions -> unit) =
+                state.MapSettings <| fun state ->
+                    { state with
+                        Config =
+                            { SignalR.Settings.GetConfigOrDefault state with
+                                HubConnectionOptions = Some f }
+                            |> Some }
+                    
             member _.Run (state: State.Settings<_,_,_,_,_>) =
                 match state with
                 | State.HasStreamBoth(settings,streamFrom,streamTo) -> settings, Some streamFrom, Some streamTo

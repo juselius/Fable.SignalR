@@ -336,6 +336,9 @@ type internal IHubConnectionBuilder<'ClientApi,'ServerApi> =
     abstract withAutomaticReconnect: unit -> IHubConnectionBuilder<'ClientApi,'ServerApi>
     abstract withAutomaticReconnect: retryDelays: seq<int> -> IHubConnectionBuilder<'ClientApi,'ServerApi>
     abstract withAutomaticReconnect: reconnectPolicy: RetryPolicy -> IHubConnectionBuilder<'ClientApi,'ServerApi>
+    
+    abstract withStatefulReconnect: unit -> IHubConnectionBuilder<'ClientApi,'ServerApi>
+    abstract withStatefulReconnect: reconnectPolicy: ReconnectOptions -> IHubConnectionBuilder<'ClientApi,'ServerApi>
 
     abstract build: unit -> IHubConnection<'ClientApi,'ClientStreamFromApi,'ClientStreamToApi,'ServerApi,'ServerStreamApi>
 

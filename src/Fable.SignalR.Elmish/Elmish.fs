@@ -103,6 +103,14 @@ module Elmish =
                 hub <- hub.withAutomaticReconnect(reconnectPolicy)
                 this
 
+            member this.withStatefulReconnect () = 
+                hub <- hub.withStatefulReconnect()
+                this
+                
+            member this.withStatefulReconnect (reconnectOptions: ReconnectOptions) = 
+                hub <- hub.withStatefulReconnect(reconnectOptions)
+                this
+
             [<EditorBrowsable(EditorBrowsableState.Never)>]
             #if FABLE_COMPILER
             member inline _.build () : HubConnection<'ClientApi,'ClientStreamFromApi,'ClientStreamToApi,'ServerApi,'ServerStreamApi> =

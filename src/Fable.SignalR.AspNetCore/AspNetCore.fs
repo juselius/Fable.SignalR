@@ -82,6 +82,11 @@ module SignalRExtension =
         match settings.Config with
         | Some conf -> conf.UseRedis
         | None -> None
+        
+    let private withConnectionDispatcherOptions (settings: SignalR.Settings<'ClientApi,'ServerApi>) =
+        settings.Config
+        |> Option.bind _.HubConnectionOptions
+        |> Option.defaultValue ignore
                 
     type IServiceCollection with
         /// Adds SignalR services to the specified Microsoft.Extensions.DependencyInjection.IServiceCollection.
@@ -323,24 +328,24 @@ module SignalRExtension =
         member this.UseSignalR
             (settings: SignalR.Settings<'ClientApi,'ServerApi>,
              streamTo: IAsyncEnumerable<'ClientStreamApi> -> FableHub<'ClientApi,'ServerApi> -> #Task) =
-            
+            let opts = withConnectionDispatcherOptions settings
             let config = 
                 match settings.Config with
                 | Some { OnConnected = Some _; OnDisconnected = None } ->
                     fun (endpoints: IEndpointRouteBuilder) ->
-                        endpoints.MapHub<FableHub.Stream.To.OnConnected<'ClientApi,'ClientStreamApi,'ServerApi>>(settings.EndpointPattern)
+                        endpoints.MapHub<FableHub.Stream.To.OnConnected<'ClientApi,'ClientStreamApi,'ServerApi>>(settings.EndpointPattern, opts)
                         |> SignalR.Config.bindEnpointConfig settings.Config
                 | Some { OnConnected = None; OnDisconnected = Some _ } ->
                     fun (endpoints: IEndpointRouteBuilder) ->
-                        endpoints.MapHub<FableHub.Stream.To.OnDisconnected<'ClientApi,'ClientStreamApi,'ServerApi>>(settings.EndpointPattern)
+                        endpoints.MapHub<FableHub.Stream.To.OnDisconnected<'ClientApi,'ClientStreamApi,'ServerApi>>(settings.EndpointPattern, opts)
                         |> SignalR.Config.bindEnpointConfig settings.Config
                 | Some { OnConnected = Some _; OnDisconnected = Some _ } ->
                     fun (endpoints: IEndpointRouteBuilder) ->
-                        endpoints.MapHub<FableHub.Stream.To.Both<'ClientApi,'ClientStreamApi,'ServerApi>>(settings.EndpointPattern)
+                        endpoints.MapHub<FableHub.Stream.To.Both<'ClientApi,'ClientStreamApi,'ServerApi>>(settings.EndpointPattern, opts)
                         |> SignalR.Config.bindEnpointConfig settings.Config
                 | _ ->
                     fun (endpoints: IEndpointRouteBuilder) ->
-                        endpoints.MapHub<StreamToFableHub<'ClientApi,'ClientStreamApi,'ServerApi>>(settings.EndpointPattern)
+                        endpoints.MapHub<StreamToFableHub<'ClientApi,'ClientStreamApi,'ServerApi>>(settings.EndpointPattern, opts)
                         |> SignalR.Config.bindEnpointConfig settings.Config
 
             this
@@ -355,23 +360,24 @@ module SignalRExtension =
                 IAsyncEnumerable<'ServerStreamApi>,
              streamTo: IAsyncEnumerable<'ClientStreamToApi> -> FableHub<'ClientApi,'ServerApi> -> #Task) =
             
+            let opts = withConnectionDispatcherOptions settings
             let config = 
                 match settings.Config with
                 | Some { OnConnected = Some _; OnDisconnected = None } ->
                     fun (endpoints: IEndpointRouteBuilder) ->
-                        endpoints.MapHub<FableHub.Stream.Both.OnConnected<'ClientApi,'ClientStreamFromApi,'ClientStreamToApi,'ServerApi,'ServerStreamApi>>(settings.EndpointPattern)
+                        endpoints.MapHub<FableHub.Stream.Both.OnConnected<'ClientApi,'ClientStreamFromApi,'ClientStreamToApi,'ServerApi,'ServerStreamApi>>(settings.EndpointPattern, opts)
                         |> SignalR.Config.bindEnpointConfig settings.Config
                 | Some { OnConnected = None; OnDisconnected = Some _ } ->
                     fun (endpoints: IEndpointRouteBuilder) ->
-                        endpoints.MapHub<FableHub.Stream.Both.OnDisconnected<'ClientApi,'ClientStreamFromApi,'ClientStreamToApi,'ServerApi,'ServerStreamApi>>(settings.EndpointPattern)
+                        endpoints.MapHub<FableHub.Stream.Both.OnDisconnected<'ClientApi,'ClientStreamFromApi,'ClientStreamToApi,'ServerApi,'ServerStreamApi>>(settings.EndpointPattern, opts)
                         |> SignalR.Config.bindEnpointConfig settings.Config
                 | Some { OnConnected = Some _; OnDisconnected = Some _ } ->
                     fun (endpoints: IEndpointRouteBuilder) ->
-                        endpoints.MapHub<FableHub.Stream.Both.Both<'ClientApi,'ClientStreamFromApi,'ClientStreamToApi,'ServerApi,'ServerStreamApi>>(settings.EndpointPattern)
+                        endpoints.MapHub<FableHub.Stream.Both.Both<'ClientApi,'ClientStreamFromApi,'ClientStreamToApi,'ServerApi,'ServerStreamApi>>(settings.EndpointPattern, opts)
                         |> SignalR.Config.bindEnpointConfig settings.Config
                 | _ ->
                     fun (endpoints: IEndpointRouteBuilder) ->
-                        endpoints.MapHub<StreamBothFableHub<'ClientApi,'ClientStreamFromApi,'ClientStreamToApi,'ServerApi,'ServerStreamApi>>(settings.EndpointPattern)
+                        endpoints.MapHub<StreamBothFableHub<'ClientApi,'ClientStreamFromApi,'ClientStreamToApi,'ServerApi,'ServerStreamApi>>(settings.EndpointPattern, opts)
                         |> SignalR.Config.bindEnpointConfig settings.Config
 
             this

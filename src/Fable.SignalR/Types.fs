@@ -64,6 +64,8 @@ type RetryPolicy =
       /// retryContext - Details related to the retry event to help determine how 
       /// long to wait for the next retry.
       nextRetryDelayInMilliseconds: RetryContext -> int option }
+    
+type ReconnectOptions = { bufferSize: int }
 
 /// Interface to observe a stream.
 type IStreamSubscriber<'T> =

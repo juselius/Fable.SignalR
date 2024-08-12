@@ -2,6 +2,7 @@
 
 open Fable.SignalR.Shared
 open Microsoft.AspNetCore.Builder
+open Microsoft.AspNetCore.Http
 open Microsoft.AspNetCore.SignalR
 open Microsoft.AspNetCore.Authorization
 open Microsoft.AspNetCore.SignalR.StackExchangeRedis
@@ -586,8 +587,11 @@ module SignalR =
           /// Enable MessagePack binary (de)serialization instead of JSON.
           UseMessagePack: bool
           /// Configure the SignalR server.
-          UseServerBuilder: (ISignalRServerBuilder -> ISignalRServerBuilder) option 
+          UseServerBuilder: (ISignalRServerBuilder -> ISignalRServerBuilder) option
+          /// Use Redis backplane for scaleout
           UseRedis: (string * System.Action<RedisOptions>) option
+          /// Hub connection dispatcher options
+          HubConnectionOptions: System.Action<Connections.HttpConnectionDispatcherOptions> option
         }
 
         /// Creates an empty record.
@@ -604,6 +608,7 @@ module SignalR =
               UseMessagePack = false
               UseServerBuilder = None
               UseRedis = None
+              HubConnectionOptions = None 
             }
 
     [<RequireQualifiedAccess>]
