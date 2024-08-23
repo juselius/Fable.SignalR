@@ -3,7 +3,7 @@
   <PropertyGroup>
     <OutputType>Library</OutputType>
     <TargetFramework>net8.0</TargetFramework>
-    <Version>1.4.0</Version>
+    <Version>1.4.1</Version>
     <PackageId>Oceanbox.SignalR.Feliz</PackageId>
   </PropertyGroup>
   <ItemGroup>

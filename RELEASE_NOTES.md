@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.1](https://gitlab.com/oceanbox/Fable.SignalR/compare/v1.4.0...v1.4.1) (2024-08-23)
+
+
+### Bug Fixes
+
+* update dependencies and versions ([83c653e](https://gitlab.com/oceanbox/Fable.SignalR/commit/83c653e382cbe669b8358235a92441df8182f032))
+
 # [1.4.0](https://gitlab.com/oceanbox/Fable.SignalR/compare/v1.3.4...v1.4.0) (2024-08-12)
 
 
