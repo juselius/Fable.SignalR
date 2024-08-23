@@ -4,7 +4,7 @@
     <OutputType>Library</OutputType>
     <TargetFrameworks>net8.0</TargetFrameworks>
     <IsPackable>true</IsPackable>
-    <Version>1.3.4</Version>
+    <Version>1.4.0</Version>
     <PackageId>Oceanbox.SignalR.DotNet.Elmish</PackageId>
   </PropertyGroup>
   <ItemGroup>
