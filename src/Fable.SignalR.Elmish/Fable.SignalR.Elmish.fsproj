@@ -16,7 +16,7 @@
   </ItemGroup>
   <PropertyGroup>
     <NpmDependencies>
-      <NpmPackage Name="@microsoft/signalr" Version="8.0.7" ResolutionStrategy="max"/>
+      <NpmPackage Name="@microsoft/signalr" Version="gte 8.0.7 lt 9" ResolutionStrategy="max"/>
     </NpmDependencies>
   </PropertyGroup>
   <ItemGroup>

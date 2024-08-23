@@ -21,8 +21,8 @@
   "dependencies": {
     "@microsoft/signalr": "8.0.7",
     "plotly.js": "^1",
-    "react": "^16",
-    "react-dom": "^16",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
     "react-plotly.js": "^2"
   },
   "devDependencies": {
