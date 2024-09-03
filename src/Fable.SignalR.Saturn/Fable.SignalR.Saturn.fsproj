@@ -5,7 +5,7 @@
     <TargetFrameworks>net8.0</TargetFrameworks>
     <IsPackable>true</IsPackable>
     <Version>1.4.1</Version>
-    <PackageId>Oceanbox.SignalR.Saturn</PackageId>
+    <PackageId>Fable.SignalR.Saturn</PackageId>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Saturn.fs"/>

@@ -5,7 +5,7 @@
     <TargetFrameworks>net8.0</TargetFrameworks>
     <IsPackable>true</IsPackable>
     <Version>1.4.1</Version>
-    <PackageId>Oceanbox.SignalR.DotNet</PackageId>
+    <PackageId>Fable.SignalR.DotNet</PackageId>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Common.fs"/>

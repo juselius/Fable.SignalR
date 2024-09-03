@@ -6,7 +6,7 @@
     <IsPackable>true</IsPackable>
     <PackageId>Fable.SignalR</PackageId>
     <Version>1.4.1</Version>
-    <PackageId>Oceanbox.SignalR.Elmish</PackageId>
+    <PackageId>Fable.SignalR.Elmish</PackageId>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Elmish.fs"/>
