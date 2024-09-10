@@ -1,7 +1,6 @@
 ﻿namespace Fable.SignalR
 
 open Microsoft.AspNetCore.SignalR.StackExchangeRedis
-open StackExchange.Redis
 
 [<AutoOpen>]
 module SignalRExtension =
@@ -17,7 +16,7 @@ module SignalRExtension =
     open Newtonsoft.Json
     open System.Collections.Generic
     open System.Threading.Tasks
-    
+
     [<RequireQualifiedAccess>]
     module internal Option =
         let mapThrough (config: SignalR.Config<_,_> option) (configToFun: SignalR.Config<_,_> -> ('T -> 'T) option) (item: 'T) =
@@ -30,24 +29,23 @@ module SignalRExtension =
         let [<Literal>] Ns = "Microsoft.AspNetCore.SignalR"
 
         let config<'T, 'ClientApi,'ClientStreamFromApi,'ClientStreamToApi,'ServerApi,'ServerStreamApi when 'T :> Hub>
-            (builder: IServiceCollection) (hubOptions: (HubOptions -> unit) option) 
+            (builder: IServiceCollection) (hubOptions: (HubOptions -> unit) option)
             (msgPack: bool)
             (builderFun: (ISignalRServerBuilder -> ISignalRServerBuilder) option)
             (redis: (string * System.Action<RedisOptions>) option)
             (transients: IServiceCollection -> IServiceCollection) =
-            
+
             builder.AddSignalR()
             |> fun builder ->
                 if msgPack then
                     builder.Services.AddSingleton<IHubProtocol,MsgPackProtocol.ServerFableHubProtocol<'ClientApi,'ClientStreamFromApi,'ClientStreamToApi,'ServerApi,'ServerStreamApi>>()
                     |> ignore
-
                     builder
                 else
                     builder
-                        .AddNewtonsoftJsonProtocol(fun o -> 
+                        .AddNewtonsoftJsonProtocol(fun o ->
                             o.PayloadSerializerSettings.DateParseHandling <- DateParseHandling.None
-                            o.PayloadSerializerSettings.ContractResolver <- new Serialization.DefaultContractResolver()
+                            o.PayloadSerializerSettings.ContractResolver <- Serialization.DefaultContractResolver()
                             o.PayloadSerializerSettings.Converters.Add(FableJsonConverter()))
             |> fun builder ->
                 match redis with
@@ -66,9 +64,9 @@ module SignalRExtension =
 
     type IHostBuilder with
         /// Adds a logging filter for SignalR with the given log level threshold.
-        member this.SignalRLogLevel (logLevel: Microsoft.Extensions.Logging.LogLevel) =
+        member this.SignalRLogLevel (logLevel: LogLevel) =
             this.ConfigureLogging(fun l -> l.AddFilter(Impl.Ns, logLevel) |> ignore)
-        
+
         /// Adds a logging filter for SignalR with the given log level threshold.
         member this.SignalRLogLevel (settings: SignalR.Settings<'ClientApi,'ServerApi>) =
             settings.Config
@@ -82,12 +80,12 @@ module SignalRExtension =
         match settings.Config with
         | Some conf -> conf.UseRedis
         | None -> None
-        
+
     let private withConnectionDispatcherOptions (settings: SignalR.Settings<'ClientApi,'ServerApi>) =
         settings.Config
         |> Option.bind _.HubConnectionOptions
         |> Option.defaultValue ignore
-                
+
     type IServiceCollection with
         /// Adds SignalR services to the specified Microsoft.Extensions.DependencyInjection.IServiceCollection.
         member this.AddSignalR (settings: SignalR.Settings<'ClientApi,'ServerApi>) =
@@ -102,12 +100,13 @@ module SignalRExtension =
                 fun s -> FableHub.OnDisconnected.AddServices(onDisconnect, settings.Send, settings.Invoke, s)
             | Some { OnConnected = Some onConnect; OnDisconnected = Some onDisconnect } ->
                 fun s -> FableHub.Both.AddServices(onConnect, onDisconnect, settings.Send, settings.Invoke, s)
-            | _ -> fun s -> BaseFableHub.AddServices(settings.Send, settings.Invoke, s)
+            | _ -> fun s ->
+                BaseFableHub.AddServices(settings.Send, settings.Invoke, s)
             |> Impl.config<BaseFableHub<'ClientApi,'ServerApi>,'ClientApi,unit,unit,'ServerApi,unit> this hubOptions msgPk builderConfig (useRedis settings)
-            
+
         /// Adds SignalR services to the specified Microsoft.Extensions.DependencyInjection.IServiceCollection.
         member this.AddSignalR
-            (settings: SignalR.Settings<'ClientApi,'ServerApi>, 
+            (settings: SignalR.Settings<'ClientApi,'ServerApi>,
              streamFrom: 'ClientStreamApi -> FableHub<'ClientApi,'ServerApi> -> IAsyncEnumerable<'ServerStreamApi>) =
 
             let hubOptions = settings.Config |> Option.bind (fun s -> s.HubOptions)
@@ -122,12 +121,12 @@ module SignalRExtension =
             | Some { OnConnected = Some onConnect; OnDisconnected = Some onDisconnect } ->
                 fun s -> FableHub.Stream.From.Both.AddServices(onConnect, onDisconnect, settings.Send, settings.Invoke, streamFrom, s)
             | _ -> fun s -> StreamFromFableHub.AddServices(settings.Send, settings.Invoke, streamFrom, s)
-            |> Impl.config<StreamFromFableHub<'ClientApi,'ClientStreamApi,'ServerApi,'ServerStreamApi>,'ClientApi,'ClientStreamApi,unit,'ServerApi,'ServerStreamApi> 
+            |> Impl.config<StreamFromFableHub<'ClientApi,'ClientStreamApi,'ServerApi,'ServerStreamApi>,'ClientApi,'ClientStreamApi,unit,'ServerApi,'ServerStreamApi>
                 this hubOptions msgPk builderConfig (useRedis settings)
-        
+
         /// Adds SignalR services to the specified Microsoft.Extensions.DependencyInjection.IServiceCollection.
         member this.AddSignalR
-            (settings: SignalR.Settings<'ClientApi,'ServerApi>, 
+            (settings: SignalR.Settings<'ClientApi,'ServerApi>,
              streamTo: IAsyncEnumerable<'ClientStreamApi> -> FableHub<'ClientApi,'ServerApi> -> #Task) =
 
             let hubOptions = settings.Config |> Option.bind (fun s -> s.HubOptions)
@@ -142,12 +141,12 @@ module SignalRExtension =
             | Some { OnConnected = Some onConnect; OnDisconnected = Some onDisconnect } ->
                 fun s -> FableHub.Stream.To.Both.AddServices(onConnect, onDisconnect, settings.Send, settings.Invoke, Task.toGen streamTo, s)
             | _ -> fun s -> StreamToFableHub.AddServices(settings.Send, settings.Invoke, Task.toGen streamTo, s)
-            |> Impl.config<StreamToFableHub<'ClientApi,'ClientStreamApi,'ServerApi>,'ClientApi,unit,'ClientStreamApi,'ServerApi,unit> 
+            |> Impl.config<StreamToFableHub<'ClientApi,'ClientStreamApi,'ServerApi>,'ClientApi,unit,'ClientStreamApi,'ServerApi,unit>
                 this hubOptions msgPk builderConfig (useRedis settings)
-        
+
         /// Adds SignalR services to the specified Microsoft.Extensions.DependencyInjection.IServiceCollection.
         member this.AddSignalR
-            (settings: SignalR.Settings<'ClientApi,'ServerApi>, 
+            (settings: SignalR.Settings<'ClientApi,'ServerApi>,
              streamFrom: 'ClientStreamFromApi -> FableHub<'ClientApi,'ServerApi> -> IAsyncEnumerable<'ServerStreamApi>,
              streamTo: IAsyncEnumerable<'ClientStreamToApi> -> FableHub<'ClientApi,'ServerApi> -> #Task) =
 
@@ -163,9 +162,9 @@ module SignalRExtension =
             | Some { OnConnected = Some onConnect; OnDisconnected = Some onDisconnect } ->
                 fun s -> FableHub.Stream.Both.Both.AddServices(onConnect, onDisconnect, settings.Send, settings.Invoke, streamFrom, Task.toGen streamTo, s)
             | _ -> fun s -> StreamBothFableHub.AddServices(settings.Send, settings.Invoke, streamFrom, Task.toGen streamTo, s)
-            |> Impl.config<StreamBothFableHub<'ClientApi,'ClientStreamFromApi,'ClientStreamToApi,'ServerApi,'ServerStreamApi>,'ClientApi,'ClientStreamFromApi,'ClientStreamToApi,'ServerApi,'ServerStreamApi> 
+            |> Impl.config<StreamBothFableHub<'ClientApi,'ClientStreamFromApi,'ClientStreamToApi,'ServerApi,'ServerStreamApi>,'ClientApi,'ClientStreamFromApi,'ClientStreamToApi,'ServerApi,'ServerStreamApi>
                 this hubOptions msgPk builderConfig (useRedis settings)
-        
+
         /// Adds SignalR services to the specified Microsoft.Extensions.DependencyInjection.IServiceCollection.
         member this.AddSignalR(endpoint: string, update: 'ClientApi -> FableHub<'ClientApi,'ServerApi> -> #Task, invoke: 'ClientApi -> FableHub -> Task<'ServerApi>) =
             SignalR.ConfigBuilder(endpoint, Task.toGen update, invoke).Build()
@@ -176,18 +175,18 @@ module SignalRExtension =
              update: 'ClientApi -> FableHub<'ClientApi,'ServerApi> -> #Task,
              invoke: 'ClientApi -> FableHub -> Task<'ServerApi>,
              streamFrom: 'ClientStreamApi -> FableHub<'ClientApi,'ServerApi> -> IAsyncEnumerable<'ServerStreamApi>) =
-            
+
             this.AddSignalR(SignalR.ConfigBuilder(endpoint, Task.toGen update, invoke).Build(), streamFrom)
-        
+
         /// Adds SignalR services to the specified Microsoft.Extensions.DependencyInjection.IServiceCollection.
         member this.AddSignalR
             (endpoint: string,
              update: 'ClientApi -> FableHub<'ClientApi,'ServerApi> -> #Task,
              invoke: 'ClientApi -> FableHub -> Task<'ServerApi>,
              streamTo: IAsyncEnumerable<'ClientStreamApi> -> FableHub<'ClientApi,'ServerApi> -> #Task) =
-            
+
             this.AddSignalR(SignalR.ConfigBuilder(endpoint, Task.toGen update, invoke).Build(), Task.toGen streamTo)
-        
+
         /// Adds SignalR services to the specified Microsoft.Extensions.DependencyInjection.IServiceCollection.
         member this.AddSignalR
             (endpoint: string,
@@ -195,9 +194,9 @@ module SignalRExtension =
              invoke: 'ClientApi -> FableHub -> Task<'ServerApi>,
              streamFrom: 'ClientStreamFromApi -> FableHub<'ClientApi,'ServerApi> -> IAsyncEnumerable<'ServerStreamApi>,
              streamTo: IAsyncEnumerable<'ClientStreamToApi> -> FableHub<'ClientApi,'ServerApi> -> #Task) =
-            
+
             this.AddSignalR(SignalR.ConfigBuilder(endpoint, Task.toGen update, invoke).Build(), streamFrom, Task.toGen streamTo)
-        
+
         /// Adds SignalR services to the specified Microsoft.Extensions.DependencyInjection.IServiceCollection.
         member this.AddSignalR
             (endpoint: string,
@@ -205,11 +204,11 @@ module SignalRExtension =
              invoke: 'ClientApi -> FableHub -> Task<'ServerApi>,
              config: SignalR.ConfigBuilder<'ClientApi,'ServerApi> -> SignalR.ConfigBuilder<'ClientApi,'ServerApi>) =
 
-            SignalR.ConfigBuilder(endpoint, Task.toGen update, invoke) 
-            |> config 
+            SignalR.ConfigBuilder(endpoint, Task.toGen update, invoke)
+            |> config
             |> fun res -> res.Build()
             |> this.AddSignalR
-        
+
         /// Adds SignalR services to the specified Microsoft.Extensions.DependencyInjection.IServiceCollection.
         member this.AddSignalR
             (endpoint: string,
@@ -218,10 +217,10 @@ module SignalRExtension =
              streamFrom: 'ClientStreamApi -> FableHub<'ClientApi,'ServerApi> -> IAsyncEnumerable<'ServerStreamApi>,
              config: SignalR.ConfigBuilder<'ClientApi,'ServerApi> -> SignalR.ConfigBuilder<'ClientApi,'ServerApi>) =
 
-            SignalR.ConfigBuilder(endpoint, Task.toGen update, invoke) 
-            |> config 
+            SignalR.ConfigBuilder(endpoint, Task.toGen update, invoke)
+            |> config
             |> fun res -> this.AddSignalR(res.Build(), streamFrom)
-        
+
         /// Adds SignalR services to the specified Microsoft.Extensions.DependencyInjection.IServiceCollection.
         member this.AddSignalR
             (endpoint: string,
@@ -230,10 +229,10 @@ module SignalRExtension =
              streamTo: IAsyncEnumerable<'ClientStreamApi> -> FableHub<'ClientApi,'ServerApi> -> #Task,
              config: SignalR.ConfigBuilder<'ClientApi,'ServerApi> -> SignalR.ConfigBuilder<'ClientApi,'ServerApi>) =
 
-            SignalR.ConfigBuilder(endpoint, Task.toGen update, invoke) 
-            |> config 
+            SignalR.ConfigBuilder(endpoint, Task.toGen update, invoke)
+            |> config
             |> fun res -> this.AddSignalR(res.Build(), Task.toGen streamTo)
-        
+
         /// Adds SignalR services to the specified Microsoft.Extensions.DependencyInjection.IServiceCollection.
         member this.AddSignalR
             (endpoint: string,
@@ -243,8 +242,8 @@ module SignalRExtension =
              streamTo: IAsyncEnumerable<'ClientStreamToApi> -> FableHub<'ClientApi,'ServerApi> -> #Task,
              config: SignalR.ConfigBuilder<'ClientApi,'ServerApi> -> SignalR.ConfigBuilder<'ClientApi,'ServerApi>) =
 
-            SignalR.ConfigBuilder(endpoint, Task.toGen update, invoke) 
-            |> config 
+            SignalR.ConfigBuilder(endpoint, Task.toGen update, invoke)
+            |> config
             |> fun res -> this.AddSignalR(res.Build(), streamFrom, Task.toGen streamTo)
 
     type IApplicationBuilder with
@@ -254,23 +253,18 @@ module SignalRExtension =
         member private this.ApplyConfigs (settings: SignalR.Settings<'ClientApi,'ServerApi>) =
             if settings.Config.IsSome then
                 this
-                    .ApplyConfig(settings.Config, fun c -> c.BeforeUseRouting)
-                    .ApplyConfig(settings.Config, fun c -> 
-                        if c.NoRouting then None 
-                        else Some (fun app -> app.UseRouting())
+                    .ApplyConfig(settings.Config, _.BeforeUseRouting)
+                    .ApplyConfig(settings.Config, fun c ->
+                        if c.NoRouting then None
+                        else Some _.UseRouting()
                     )
-                    .ApplyConfig(settings.Config, fun c -> 
-                        if c.EnableBearerAuth then 
-                            Some (fun app -> app.UseMiddleware<WebSocketsMiddleware>(settings.EndpointPattern)) 
-                        else None
-                    )
-                    .ApplyConfig(settings.Config, fun c -> c.AfterUseRouting)
+                    .ApplyConfig(settings.Config, _.AfterUseRouting)
             else this.UseRouting()
 
         /// Configures routing and endpoints for the SignalR hub.
         member this.UseSignalR (settings: SignalR.Settings<'ClientApi,'ServerApi>) =
-        
-            let config = 
+
+            let config =
                 match settings.Config with
                 | Some { OnConnected = Some _; OnDisconnected = None } ->
                     fun (endpoints: IEndpointRouteBuilder) ->
@@ -293,14 +287,14 @@ module SignalRExtension =
                 .ApplyConfigs(settings)
                 // fsharplint:disable-next-line
                 .UseEndpoints(fun endpoints -> endpoints |> config |> ignore)
-        
+
         /// Configures routing and endpoints for the SignalR hub.
         member this.UseSignalR
-            (settings: SignalR.Settings<'ClientApi,'ServerApi>, 
-             streamFrom: 'ClientStreamApi -> FableHub<'ClientApi,'ServerApi> -> 
+            (settings: SignalR.Settings<'ClientApi,'ServerApi>,
+             streamFrom: 'ClientStreamApi -> FableHub<'ClientApi,'ServerApi> ->
                 IAsyncEnumerable<'ServerStreamApi>) =
-            
-            let config = 
+
+            let config =
                 match settings.Config with
                 | Some { OnConnected = Some _; OnDisconnected = None } ->
                     fun (endpoints: IEndpointRouteBuilder) ->
@@ -323,13 +317,13 @@ module SignalRExtension =
                 .ApplyConfigs(settings)
                 // fsharplint:disable-next-line
                 .UseEndpoints(fun endpoints -> endpoints |> config |> ignore)
-        
+
         /// Configures routing and endpoints for the SignalR hub.
         member this.UseSignalR
             (settings: SignalR.Settings<'ClientApi,'ServerApi>,
              streamTo: IAsyncEnumerable<'ClientStreamApi> -> FableHub<'ClientApi,'ServerApi> -> #Task) =
             let opts = withConnectionDispatcherOptions settings
-            let config = 
+            let config =
                 match settings.Config with
                 | Some { OnConnected = Some _; OnDisconnected = None } ->
                     fun (endpoints: IEndpointRouteBuilder) ->
@@ -352,16 +346,16 @@ module SignalRExtension =
                 .ApplyConfigs(settings)
                 // fsharplint:disable-next-line
                 .UseEndpoints(fun endpoints -> endpoints |> config |> ignore)
-        
+
         /// Configures routing and endpoints for the SignalR hub.
         member this.UseSignalR
-            (settings: SignalR.Settings<'ClientApi,'ServerApi>, 
-             streamFrom: 'ClientStreamFromApi -> FableHub<'ClientApi,'ServerApi> -> 
+            (settings: SignalR.Settings<'ClientApi,'ServerApi>,
+             streamFrom: 'ClientStreamFromApi -> FableHub<'ClientApi,'ServerApi> ->
                 IAsyncEnumerable<'ServerStreamApi>,
              streamTo: IAsyncEnumerable<'ClientStreamToApi> -> FableHub<'ClientApi,'ServerApi> -> #Task) =
-            
+
             let opts = withConnectionDispatcherOptions settings
-            let config = 
+            let config =
                 match settings.Config with
                 | Some { OnConnected = Some _; OnDisconnected = None } ->
                     fun (endpoints: IEndpointRouteBuilder) ->

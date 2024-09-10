@@ -564,10 +564,6 @@ module SignalR =
           AfterUseRouting: (IApplicationBuilder -> IApplicationBuilder) option
           /// App configuration before app.UseRouting() is called.
           BeforeUseRouting: (IApplicationBuilder -> IApplicationBuilder) option
-          /// Inject a Websocket middleware to support bearer tokens.
-          ///
-          /// Default: false
-          EnableBearerAuth: bool
           /// Customize hub endpoint conventions.
           EndpointConfig: (HubEndpointConventionBuilder -> HubEndpointConventionBuilder) option
           /// Options used to configure hub instances.
@@ -598,7 +594,6 @@ module SignalR =
         static member Default () =
             { AfterUseRouting = None
               BeforeUseRouting = None
-              EnableBearerAuth = false
               EndpointConfig = None
               HubOptions = None
               LogLevel = None
@@ -608,7 +603,7 @@ module SignalR =
               UseMessagePack = false
               UseServerBuilder = None
               UseRedis = None
-              HubConnectionOptions = None 
+              HubConnectionOptions = None
             }
 
     [<RequireQualifiedAccess>]
@@ -668,16 +663,6 @@ module SignalR =
                     Config =
                         { Settings<'ClientApi,'ServerApi>.GetConfigOrDefault state with
                             BeforeUseRouting = Some appConfig }
-                        |> Some }
-            this
-
-        /// Inject a Websocket middleware to support bearer tokens.
-        member this.EnableBearerAuth () =
-            state <-
-                { state with
-                    Config =
-                        { Settings<'ClientApi,'ServerApi>.GetConfigOrDefault state with
-                            EnableBearerAuth = true }
                         |> Some }
             this
 

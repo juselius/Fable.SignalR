@@ -1,8 +1,6 @@
 ﻿namespace Fable.SignalR
 
-open System
 open Microsoft.AspNetCore.SignalR.StackExchangeRedis
-open StackExchange.Redis
 
 [<AutoOpen>]
 module SignalRExtension =
@@ -106,16 +104,6 @@ module SignalRExtension =
                                 NoRouting = true }
                             |> Some }
 
-            /// Inject a Websocket middleware to support bearer tokens.
-            [<CustomOperation("use_bearer_auth")>]
-            member _.BearerAuth (state: State.Settings<_,_,_,_,_>) =
-                state.MapSettings <| fun state ->
-                    { state with
-                        Config =
-                            { SignalR.Settings.GetConfigOrDefault state with
-                                EnableBearerAuth = true }
-                            |> Some }
-
             /// Enable MessagePack binary (de)serialization instead of JSON.
             [<CustomOperation("use_messagepack")>]
             member _.MessagePack (state: State.Settings<_,_,_,_,_>) =
@@ -205,7 +193,7 @@ module SignalRExtension =
                             { SignalR.Settings.GetConfigOrDefault state with
                                 OnDisconnected = Some f }
                             |> Some }
-                    
+
             [<CustomOperation("use_redis")>]
             member _.UseRedis (state: State.Settings<_,_,_,_,_>, connSting: string,  ?opts: System.Action<RedisOptions>) =
                 let redis =
@@ -228,7 +216,7 @@ module SignalRExtension =
                             { SignalR.Settings.GetConfigOrDefault state with
                                 HubConnectionOptions = Some f }
                             |> Some }
-                    
+
             member _.Run (state: State.Settings<_,_,_,_,_>) =
                 match state with
                 | State.HasStreamBoth(settings,streamFrom,streamTo) -> settings, Some streamFrom, Some streamTo
@@ -244,6 +232,7 @@ module SignalRExtension =
 
     type Saturn.Application.ApplicationBuilder with
         /// Adds a SignalR hub into the application.
+        /// If authentication is used, use_signalr must be called before the auth middleware.
         [<CustomOperation("use_signalr")>]
         member this.UseSignalR
             (state, settings: SignalR.Settings<'ClientApi,'ServerApi> *
@@ -271,3 +260,10 @@ module SignalRExtension =
                 |> function
                 | Some logLevel -> this.Logging(state, fun l -> l.AddFilter("Microsoft.AspNetCore.SignalR", logLevel) |> ignore)
                 | None -> state
+
+        /// Inject a Websocket middleware to support bearer tokens in signalr.
+        /// Must be added _after_ any authentication middleware.
+        [<CustomOperation("with_signalr_bearer_auth")>]
+        member this.WithBearerAuth (state, ep: string) =
+            this.AppConfig(state, _.UseMiddleware<WebSocketsMiddleware>(ep))
+
