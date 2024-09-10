@@ -263,7 +263,7 @@ module SignalRExtension =
 
         /// Inject a Websocket middleware to support bearer tokens in signalr.
         /// Must be added _after_ any authentication middleware.
-        [<CustomOperation("with_signalr_bearer_auth")>]
+        [<CustomOperation("use_bearer_auth")>]
         member this.WithBearerAuth (state, ep: string) =
             this.AppConfig(state, _.UseMiddleware<WebSocketsMiddleware>(ep))
 
