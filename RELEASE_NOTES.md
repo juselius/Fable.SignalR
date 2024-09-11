@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.0.1](https://gitlab.com/oceanbox/Fable.SignalR/compare/v2.0.0...v2.0.1) (2024-09-11)
+
+
+### Bug Fixes
+
+* fix use_bearer_auth name ([dda81b7](https://gitlab.com/oceanbox/Fable.SignalR/commit/dda81b7791370c1fa6159fa88f117cacd50dd46d))
+* remove non-working use_bearer auth, and add a working version ([f17333a](https://gitlab.com/oceanbox/Fable.SignalR/commit/f17333a0d4db58ba02808e4ddcc0a81ec4e9ad44))
+
 # [2.0.0](https://gitlab.com/oceanbox/Fable.SignalR/compare/v1.4.1...v2.0.0) (2024-09-03)
 
 
