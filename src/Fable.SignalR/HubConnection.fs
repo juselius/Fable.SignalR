@@ -516,15 +516,18 @@ type HubConnection<'ClientApi,'ClientStreamFromApi,'ClientStreamToApi,'ServerApi
 
                             loop waitingInvocations (newConnections @ waitingConnections)
                         | HubMailbox.ServerRsp (connectionId, invocationId, msg) ->
-                            match hubId,connectionId, msg with
-                            | Some hubId, connectionId, msg when hubId = connectionId ->
+                            match hubId, connectionId, msg with
+                            | Some hubId, connectionId, msg when hubId = connectionId  ->
                                 waitingInvocations.TryFind(invocationId)
-                                |> Option.iter(fun reply -> reply.Reply(msg))
-
+                                |> Option.iter _.Reply(msg)
+                                loop (waitingInvocations.Remove(invocationId)) waitingConnections
+                            | None, _, msg  -> // if skipNegotiation = true -> hubId = None! 
+                                waitingInvocations.TryFind(invocationId)
+                                |> Option.iter _.Reply(msg)
                                 loop (waitingInvocations.Remove(invocationId)) waitingConnections
                             | _ -> loop waitingInvocations waitingConnections
                         | HubMailbox.StartInvocation (serverMsg, reply) ->
-                            let newGuid = System.Guid.NewGuid()
+                            let newGuid = Guid.NewGuid()
 
                             let newConnections =
                                 if hub.state = ConnectionState.Connected then
