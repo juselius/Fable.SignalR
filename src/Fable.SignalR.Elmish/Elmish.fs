@@ -7,23 +7,23 @@ open System.ComponentModel
 module Elmish =
     [<RequireQualifiedAccess>]
     module Elmish =
-        type HubConnectionBuilder<'ClientApi,'ClientStreamFromApi,'ClientStreamToApi,'ServerApi,'ServerStreamApi,'Msg> 
+        type HubConnectionBuilder<'ClientApi,'ClientStreamFromApi,'ClientStreamToApi,'ServerApi,'ServerStreamApi,'Msg>
             internal (hub: Fable.SignalR.IHubConnectionBuilder<'ClientApi,'ServerApi>, dispatch: 'Msg -> unit) =
-            
+
             let mutable hub = hub
             let mutable handlers = Handlers.empty
             let mutable useMsgPack = false
 
             /// Configures console logging for the HubConnection.
-            member this.configureLogging (logLevel: LogLevel) = 
+            member this.configureLogging (logLevel: LogLevel) =
                 hub <- hub.configureLogging(logLevel)
                 this
             /// Configures custom logging for the HubConnection.
-            member this.configureLogging (logger: ILogger) = 
+            member this.configureLogging (logger: ILogger) =
                 hub <- hub.configureLogging(logger)
                 this
             /// Configures custom logging for the HubConnection.
-            member this.configureLogging (logLevel: string) = 
+            member this.configureLogging (logLevel: string) =
                 hub <- hub.configureLogging(logLevel)
                 this
 
@@ -33,10 +33,10 @@ module Elmish =
                 this
 
             /// Configures the HubConnection to callback when a new message is recieved.
-            member this.onMessage (callback: 'ServerApi -> 'Msg) = 
+            member this.onMessage (callback: 'ServerApi -> 'Msg) =
                 handlers <- { handlers with onMessage = Some (unbox (callback >> dispatch)) }
                 this
-            
+
             /// Registers a handler that will be invoked when the connection successfully reconnects.
             member this.onReconnected (callback: (string option -> 'Msg)) =
                 handlers <- { handlers with onReconnected = Some (callback >> dispatch) }
@@ -52,62 +52,62 @@ module Elmish =
                 useMsgPack <- true
                 this
 
-            /// Configures the HubConnection to use HTTP-based transports to connect 
+            /// Configures the HubConnection to use HTTP-based transports to connect
             /// to the specified URL.
-            /// 
-            /// The transport will be selected automatically based on what the server 
+            ///
+            /// The transport will be selected automatically based on what the server
             /// and client support.
-            member this.withUrl (url: string) = 
+            member this.withUrl (url: string) =
                 hub <- hub.withUrl(url)
                 this
 
             /// Configures the HubConnection to use the specified HTTP-based transport
             /// to connect to the specified URL.
-            member this.withUrl (url: string, transportType: TransportType) = 
+            member this.withUrl (url: string, transportType: TransportType) =
                 hub <- hub.withUrl(url, transportType)
                 this
 
             /// Configures the HubConnection to use HTTP-based transports to connect to
             /// the specified URL.
-            member this.withUrl (url: string, options: Http.ConnectionBuilder -> Http.ConnectionBuilder) = 
+            member this.withUrl (url: string, options: Http.ConnectionBuilder -> Http.ConnectionBuilder) =
                 hub <- hub.withUrl(url, (Http.ConnectionBuilder() |> options).build())
                 this
 
             /// Configures the HubConnection to use the specified Hub Protocol.
-            member this.withHubProtocol (protocol: IHubProtocol<'ClientApi,'ClientStreamFromApi,'ClientStreamToApi,'ServerApi,'ServerStreamApi>) = 
+            member this.withHubProtocol (protocol: IHubProtocol<'ClientApi,'ClientStreamFromApi,'ClientStreamToApi,'ServerApi,'ServerStreamApi>) =
                 hub <- hub.withHubProtocol(protocol)
                 this
 
-            /// Configures the HubConnection to automatically attempt to reconnect 
+            /// Configures the HubConnection to automatically attempt to reconnect
             /// if the connection is lost.
-            /// 
-            /// By default, the client will wait 0, 2, 10 and 30 seconds respectively 
+            ///
+            /// By default, the client will wait 0, 2, 10 and 30 seconds respectively
             /// before trying up to 4 reconnect attempts.
-            member this.withAutomaticReconnect () = 
+            member this.withAutomaticReconnect () =
                 hub <- hub.withAutomaticReconnect()
                 this
 
-            /// Configures the HubConnection to automatically attempt to reconnect if the 
+            /// Configures the HubConnection to automatically attempt to reconnect if the
             /// connection is lost.
-            /// 
-            /// An array containing the delays in milliseconds before trying each reconnect 
-            /// attempt. The length of the array represents how many failed reconnect attempts 
+            ///
+            /// An array containing the delays in milliseconds before trying each reconnect
+            /// attempt. The length of the array represents how many failed reconnect attempts
             /// it takes before the client will stop attempting to reconnect.
-            member this.withAutomaticReconnect (retryDelays: int list) = 
+            member this.withAutomaticReconnect (retryDelays: int list) =
                 hub <- hub.withAutomaticReconnect(ResizeArray retryDelays)
                 this
 
-            /// Configures the HubConnection to automatically attempt to reconnect if the 
+            /// Configures the HubConnection to automatically attempt to reconnect if the
             /// connection is lost.
-            member this.withAutomaticReconnect (reconnectPolicy: RetryPolicy) = 
+            member this.withAutomaticReconnect (reconnectPolicy: RetryPolicy) =
                 hub <- hub.withAutomaticReconnect(reconnectPolicy)
                 this
 
-            member this.withStatefulReconnect () = 
+            member this.withStatefulReconnect () =
                 hub <- hub.withStatefulReconnect()
                 this
-                
-            member this.withStatefulReconnect (reconnectOptions: ReconnectOptions) = 
+
+            member this.withStatefulReconnect (reconnectOptions: ReconnectOptions) =
                 hub <- hub.withStatefulReconnect(reconnectOptions)
                 this
 
@@ -125,10 +125,10 @@ module Elmish =
         type Hub<'ClientApi,'ServerApi> [<EditorBrowsable(EditorBrowsableState.Never)>] (hub: HubConnection<'ClientApi,unit,unit,'ServerApi,unit>) =
             interface System.IDisposable with
                 member this.Dispose () = this.Dispose()
-            
+
             [<EditorBrowsable(EditorBrowsableState.Never)>]
             member _.hub = hub
-        
+
             [<EditorBrowsable(EditorBrowsableState.Never)>]
             member _.cts = new System.Threading.CancellationTokenSource()
 
@@ -138,30 +138,30 @@ module Elmish =
                 this.cts.Dispose()
 
             /// Default interval at which to ping the server.
-            /// 
+            ///
             /// The default value is 15,000 milliseconds (15 seconds).
             /// Allows the server to detect hard disconnects (like when a client unplugs their computer).
             member this.keepAliveInterval = this.hub.keepAliveInterval
 
             /// The server timeout in milliseconds.
-            /// 
+            ///
             /// If this timeout elapses without receiving any messages from the server, the connection will be terminated with an error.
             /// The default timeout value is 30,000 milliseconds (30 seconds).
             member this.serverTimeout = this.hub.serverTimeout
-        
+
         module StreamHub =
-            type Bidrectional<'ClientApi,'ClientStreamFromApi,'ClientStreamToApi,'ServerApi,'ServerStreamApi> 
-                [<EditorBrowsable(EditorBrowsableState.Never)>] 
+            type Bidrectional<'ClientApi,'ClientStreamFromApi,'ClientStreamToApi,'ServerApi,'ServerStreamApi>
+                [<EditorBrowsable(EditorBrowsableState.Never)>]
                 (hub: HubConnection<'ClientApi,'ClientStreamFromApi,'ClientStreamToApi,'ServerApi,'ServerStreamApi>) =
 
                 inherit Hub<'ClientApi,'ServerApi>(unbox hub)
-                
+
                 interface System.IDisposable with
                     member this.Dispose () = this.Dispose()
 
                 [<EditorBrowsable(EditorBrowsableState.Never)>]
                 member _.hub = hub
-        
+
                 [<EditorBrowsable(EditorBrowsableState.Never)>]
                 member _.cts = new System.Threading.CancellationTokenSource()
 
@@ -171,29 +171,29 @@ module Elmish =
                     this.cts.Dispose()
 
                 /// Default interval at which to ping the server.
-                /// 
+                ///
                 /// The default value is 15,000 milliseconds (15 seconds).
                 /// Allows the server to detect hard disconnects (like when a client unplugs their computer).
                 member this.keepAliveInterval = this.hub.keepAliveInterval
 
                 /// The server timeout in milliseconds.
-                /// 
+                ///
                 /// If this timeout elapses without receiving any messages from the server, the connection will be terminated with an error.
                 /// The default timeout value is 30,000 milliseconds (30 seconds).
                 member this.serverTimeout = this.hub.serverTimeout
 
-            type ServerToClient<'ClientApi,'ClientStreamApi,'ServerApi,'ServerStreamApi> 
-                [<EditorBrowsable(EditorBrowsableState.Never)>] 
+            type ServerToClient<'ClientApi,'ClientStreamApi,'ServerApi,'ServerStreamApi>
+                [<EditorBrowsable(EditorBrowsableState.Never)>]
                 (hub: HubConnection<'ClientApi,'ClientStreamApi,unit,'ServerApi,'ServerStreamApi>) =
 
                 inherit Hub<'ClientApi,'ServerApi>(unbox hub)
-        
+
                 interface System.IDisposable with
                     member this.Dispose () = this.Dispose()
 
                 [<EditorBrowsable(EditorBrowsableState.Never)>]
                 member _.hub = hub
-        
+
                 [<EditorBrowsable(EditorBrowsableState.Never)>]
                 member _.cts = new System.Threading.CancellationTokenSource()
 
@@ -203,29 +203,29 @@ module Elmish =
                     this.cts.Dispose()
 
                 /// Default interval at which to ping the server.
-                /// 
+                ///
                 /// The default value is 15,000 milliseconds (15 seconds).
                 /// Allows the server to detect hard disconnects (like when a client unplugs their computer).
                 member this.keepAliveInterval = this.hub.keepAliveInterval
 
                 /// The server timeout in milliseconds.
-                /// 
+                ///
                 /// If this timeout elapses without receiving any messages from the server, the connection will be terminated with an error.
                 /// The default timeout value is 30,000 milliseconds (30 seconds).
                 member this.serverTimeout = this.hub.serverTimeout
 
-            type ClientToServer<'ClientApi,'ClientStreamApi,'ServerApi> 
-                [<EditorBrowsable(EditorBrowsableState.Never)>] 
+            type ClientToServer<'ClientApi,'ClientStreamApi,'ServerApi>
+                [<EditorBrowsable(EditorBrowsableState.Never)>]
                 (hub: HubConnection<'ClientApi,unit,'ClientStreamApi,'ServerApi,unit>) =
-                
+
                 inherit Hub<'ClientApi,'ServerApi>(unbox hub)
 
                 interface System.IDisposable with
                     member this.Dispose () = this.Dispose()
-        
+
                 [<EditorBrowsable(EditorBrowsableState.Never)>]
                 member _.hub = hub
-        
+
                 [<EditorBrowsable(EditorBrowsableState.Never)>]
                 member _.cts = new System.Threading.CancellationTokenSource()
 
@@ -235,13 +235,13 @@ module Elmish =
                     this.cts.Dispose()
 
                 /// Default interval at which to ping the server.
-                /// 
+                ///
                 /// The default value is 15,000 milliseconds (15 seconds).
                 /// Allows the server to detect hard disconnects (like when a client unplugs their computer).
                 member this.keepAliveInterval = this.hub.keepAliveInterval
 
                 /// The server timeout in milliseconds.
-                /// 
+                ///
                 /// If this timeout elapses without receiving any messages from the server, the connection will be terminated with an error.
                 /// The default timeout value is 30,000 milliseconds (30 seconds).
                 member this.serverTimeout = this.hub.serverTimeout
@@ -260,21 +260,21 @@ module Elmish =
                     #else
                     let connect
                     #endif
-                        (registerHub: Elmish.StreamHub.Bidrectional<'ClientApi,'ClientStreamFromApi,'ClientStreamToApi,'ServerApi,'ServerStreamApi> -> 'Msg) 
-                        (config: Elmish.HubConnectionBuilder<'ClientApi,'ClientStreamFromApi,'ClientStreamToApi,'ServerApi,'ServerStreamApi,'Msg> 
+                        (registerHub: Elmish.StreamHub.Bidrectional<'ClientApi,'ClientStreamFromApi,'ClientStreamToApi,'ServerApi,'ServerStreamApi> -> 'Msg)
+                        (config: Elmish.HubConnectionBuilder<'ClientApi,'ClientStreamFromApi,'ClientStreamToApi,'ServerApi,'ServerStreamApi,'Msg>
                             -> Elmish.HubConnectionBuilder<'ClientApi,'ClientStreamFromApi,'ClientStreamToApi,'ServerApi,'ServerStreamApi,'Msg>) : Cmd<'Msg> =
-            
-                        [ fun dispatch -> 
+
+                        [ fun dispatch ->
                             let connection =
-                                Elmish.HubConnectionBuilder(Bindings.signalR.HubConnectionBuilder(), dispatch) 
-                                |> config 
+                                Elmish.HubConnectionBuilder(Bindings.signalR.HubConnectionBuilder(), dispatch)
+                                |> config
                                 |> fun hubBuilder -> hubBuilder.build()
 
                             connection.startNow()
 
                             registerHub (new Elmish.StreamHub.Bidrectional<'ClientApi,'ClientStreamFromApi,'ClientStreamToApi,'ServerApi,'ServerStreamApi>(connection))
                             |> dispatch ]
-                
+
                 [<Erase>]
                 module ServerToClient =
                     /// Starts a connection to a SignalR hub with server streaming enabled.
@@ -284,20 +284,20 @@ module Elmish =
                     let connect
                     #endif
                         (registerHub: Elmish.StreamHub.ServerToClient<'ClientApi,'ClientStreamApi,'ServerApi,'ServerStreamApi> -> 'Msg)
-                        (config: Elmish.HubConnectionBuilder<'ClientApi,'ClientStreamApi,unit,'ServerApi,'ServerStreamApi,'Msg> 
+                        (config: Elmish.HubConnectionBuilder<'ClientApi,'ClientStreamApi,unit,'ServerApi,'ServerStreamApi,'Msg>
                             -> Elmish.HubConnectionBuilder<'ClientApi,'ClientStreamApi,unit,'ServerApi,'ServerStreamApi,'Msg>) : Cmd<'Msg> =
-            
-                        [ fun dispatch -> 
+
+                        [ fun dispatch ->
                             let connection =
-                                Elmish.HubConnectionBuilder(Bindings.signalR.HubConnectionBuilder(), dispatch) 
-                                |> config 
+                                Elmish.HubConnectionBuilder(Bindings.signalR.HubConnectionBuilder(), dispatch)
+                                |> config
                                 |> fun hubBuilder -> hubBuilder.build()
 
                             connection.startNow()
 
                             registerHub (new Elmish.StreamHub.ServerToClient<'ClientApi,'ClientStreamApi,'ServerApi,'ServerStreamApi>(connection))
                             |> dispatch ]
-                    
+
                 [<Erase>]
                 module ClientToServer =
                     /// Starts a connection to a SignalR hub with client streaming enabled.
@@ -307,28 +307,28 @@ module Elmish =
                     let connect
                     #endif
                         (registerHub: Elmish.StreamHub.ClientToServer<'ClientApi,'ClientStreamApi,'ServerApi> -> 'Msg)
-                        (config: Elmish.HubConnectionBuilder<'ClientApi,unit,'ClientStreamApi,'ServerApi,unit,'Msg> 
+                        (config: Elmish.HubConnectionBuilder<'ClientApi,unit,'ClientStreamApi,'ServerApi,unit,'Msg>
                             -> Elmish.HubConnectionBuilder<'ClientApi,unit,'ClientStreamApi,'ServerApi,unit,'Msg>) : Cmd<'Msg> =
-            
-                        [ fun dispatch -> 
+
+                        [ fun dispatch ->
                             let connection =
-                                Elmish.HubConnectionBuilder(Bindings.signalR.HubConnectionBuilder(), dispatch) 
-                                |> config 
+                                Elmish.HubConnectionBuilder(Bindings.signalR.HubConnectionBuilder(), dispatch)
+                                |> config
                                 |> fun hubBuilder -> hubBuilder.build()
 
                             connection.startNow()
 
                             registerHub (new Elmish.StreamHub.ClientToServer<'ClientApi,'ClientStreamApi,'ServerApi>(connection))
                             |> dispatch ]
-                                                
+
             /// Returns the base url of the hub connection.
             let baseUrl (hub: #Elmish.Hub<'ClientApi,'ServerApi> option) (msg: string -> 'Msg) : Cmd<'Msg> =
                 [ fun dispatch -> hub |> Option.iter (fun hub -> hub.hub.baseUrl |> msg |> dispatch) ]
-                
+
             /// Returns the connectionId to the hub of this client.
             let connectionId (hub: #Elmish.Hub<'ClientApi,'ServerApi> option) (msg: string option -> 'Msg) : Cmd<'Msg> =
                 [ fun dispatch -> hub |> Option.iter (fun hub -> hub.hub.connectionId |> msg |> dispatch) ]
-            
+
             /// Starts a connection to a SignalR hub.
             #if FABLE_COMPILER
             let inline connect
@@ -336,80 +336,80 @@ module Elmish =
             let connect
             #endif
                 (registerHub: Elmish.Hub<'ClientApi,'ServerApi> -> 'Msg)
-                (config: Elmish.HubConnectionBuilder<'ClientApi,unit,unit,'ServerApi,unit,'Msg> 
+                (config: Elmish.HubConnectionBuilder<'ClientApi,unit,unit,'ServerApi,unit,'Msg>
                     -> Elmish.HubConnectionBuilder<'ClientApi,unit,unit,'ServerApi,unit,'Msg>) : Cmd<'Msg> =
-            
-                [ fun dispatch -> 
+
+                [ fun dispatch ->
                     let connection =
-                        Elmish.HubConnectionBuilder(Bindings.signalR.HubConnectionBuilder(), dispatch) 
-                        |> config 
+                        Elmish.HubConnectionBuilder(Bindings.signalR.HubConnectionBuilder(), dispatch)
+                        |> config
                         |> fun hubBuilder -> hubBuilder.build()
 
                     connection.startNow()
 
                     registerHub (new Elmish.Hub<'ClientApi,'ServerApi>(connection))
                     |> dispatch ]
-            
+
             /// Invokes a hub method on the server and maps the error.
-            /// 
-            /// This method resolves when the server indicates it has finished invoking the method. When it finishes, 
+            ///
+            /// This method resolves when the server indicates it has finished invoking the method. When it finishes,
             /// the server has finished invoking the method. If the server method returns a result, it is produced as the result of
             /// resolving the async call.
             let attempt (hub: #Elmish.Hub<'ClientApi,'ServerApi> option) (msg: 'ClientApi) (onError: exn -> 'Msg) =
                 match hub with
                 | Some hub ->
-                    Cmd.OfAsyncWith.attempt 
-                        (fun msg -> Async.StartImmediate(msg, hub.cts.Token)) 
-                        hub.hub.invoke 
+                    Cmd.OfAsyncWith.attempt
+                        (fun msg -> Async.StartImmediate(msg, hub.cts.Token))
+                        hub.hub.invoke
                         msg
                         onError
-                | None -> 
+                | None ->
                     #if DEBUG
                     JS.console.error("Cannot send a message if hub is not initialized!")
                     #endif
                     [ ignore ]
 
             /// Invokes a hub method on the server and maps the success or error.
-            /// 
-            /// This method resolves when the server indicates it has finished invoking the method. When it finishes, 
+            ///
+            /// This method resolves when the server indicates it has finished invoking the method. When it finishes,
             /// the server has finished invoking the method. If the server method returns a result, it is produced as the result of
             /// resolving the async call.
             let either (hub: #Elmish.Hub<'ClientApi,'ServerApi> option) (msg: 'ClientApi) (onSuccess: 'ServerApi -> 'Msg) (onError: exn -> 'Msg) =
                 match hub with
                 | Some hub ->
-                    Cmd.OfAsyncWith.either 
-                        (fun msg -> Async.StartImmediate(msg, hub.cts.Token)) 
-                        hub.hub.invoke 
-                        msg 
+                    Cmd.OfAsyncWith.either
+                        (fun msg -> Async.StartImmediate(msg, hub.cts.Token))
+                        hub.hub.invoke
+                        msg
                         onSuccess
                         onError
-                | None -> 
+                | None ->
                     #if DEBUG
                     JS.console.error("Cannot send a message if hub is not initialized!")
                     #endif
                     [ ignore ]
 
             /// Invokes a hub method on the server and maps the success.
-            /// 
-            /// This method resolves when the server indicates it has finished invoking the method. When it finishes, 
+            ///
+            /// This method resolves when the server indicates it has finished invoking the method. When it finishes,
             /// the server has finished invoking the method. If the server method returns a result, it is produced as the result of
             /// resolving the async call.
             let perform (hub: #Elmish.Hub<'ClientApi,'ServerApi> option) (msg: 'ClientApi) (onSuccess: 'ServerApi -> 'Msg) =
                 match hub with
                 | Some hub ->
-                    Cmd.OfAsyncWith.perform 
-                        (fun msg -> Async.StartImmediate(msg, hub.cts.Token)) 
-                        hub.hub.invoke 
+                    Cmd.OfAsyncWith.perform
+                        (fun msg -> Async.StartImmediate(msg, hub.cts.Token))
+                        hub.hub.invoke
                         msg
                         onSuccess
-                | None -> 
+                | None ->
                     #if DEBUG
                     JS.console.error("Cannot send a message if hub is not initialized!")
                     #endif
                     [ ignore ]
 
             /// Invokes a hub method on the server. Does not wait for a response from the receiver.
-            /// 
+            ///
             /// This method resolves when the client has sent the invocation to the server. The server may still
             /// be processing the invocation.
             let send (hub: #Elmish.Hub<'ClientApi,'ServerApi> option) (msg: 'ClientApi) : Cmd<'Msg> =
@@ -424,11 +424,11 @@ module Elmish =
             /// Streams from the hub.
             static member inline streamFrom (hub: Elmish.StreamHub.ServerToClient<'ClientApi,'ClientStreamApi,'ServerApi,'ServerStreamApi> option) =
                 fun (msg: 'ClientStreamApi) (subscription: System.IDisposable -> 'Msg) (subscriber: ('Msg -> unit) -> StreamSubscriber<'ServerStreamApi>) ->
-                    [ fun dispatch -> 
-                        hub |> Option.iter (fun hub -> 
+                    [ fun dispatch ->
+                        hub |> Option.iter (fun hub ->
                             async {
-                                let! streamResult = hub.hub.streamFrom msg 
-                                
+                                let! streamResult = hub.hub.streamFrom msg
+
                                 streamResult.subscribe(subscriber dispatch)
                                 |> subscription |> dispatch
                             }
@@ -437,12 +437,12 @@ module Elmish =
             /// Streams from the hub.
             static member inline streamFrom (hub: Elmish.StreamHub.Bidrectional<'ClientApi,'ClientStreamFromApi,_,'ServerApi,'ServerStreamApi> option) =
                 fun (msg: 'ClientStreamFromApi) (subscription: System.IDisposable -> 'Msg) (subscriber: ('Msg -> unit) -> StreamSubscriber<'ServerStreamApi>) ->
-                    [ fun dispatch -> 
-                        hub |> Option.iter (fun hub -> 
+                    [ fun dispatch ->
+                        hub |> Option.iter (fun hub ->
                             async {
-                                let! streamResult = hub.hub.streamFrom msg 
-                                
-                                streamResult.subscribe(subscriber dispatch) 
+                                let! streamResult = hub.hub.streamFrom msg
+
+                                streamResult.subscribe(subscriber dispatch)
                                 |> subscription |> dispatch
                             }
                             |> fun a -> Async.StartImmediate(a, hub.cts.Token)) ] : Cmd<'Msg>

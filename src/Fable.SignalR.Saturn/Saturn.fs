@@ -40,7 +40,7 @@ module SignalRExtension =
                     | NoStream settings -> mapper settings |> Settings.NoStream
 
         type SettingsBuilder () =
-            member _.Yield(_) =
+            member _.Yield _ =
                 State.Empty.Init
 
             /// The endpoint used to communicate with the hub.
@@ -166,7 +166,7 @@ module SignalRExtension =
 
             /// Adds a logging filter with the given LogLevel.
             [<CustomOperation("with_log_level")>]
-            member _.LogLevel (state: State.Settings<_,_,_,_,_>, logLevel: Microsoft.Extensions.Logging.LogLevel) =
+            member _.LogLevel (state: State.Settings<_,_,_,_,_>, logLevel: LogLevel) =
                 state.MapSettings <| fun state ->
                     { state with
                         Config =

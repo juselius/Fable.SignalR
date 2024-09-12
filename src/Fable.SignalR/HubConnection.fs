@@ -207,7 +207,7 @@ type ISubject<'T> =
 
     abstract complete: unit -> unit
 
-    abstract subscribe: observer: #IStreamSubscriber<'T> -> System.IDisposable
+    abstract subscribe: observer: #IStreamSubscriber<'T> -> IDisposable
 
 /// Stream implementation to stream items to the server.
 type Subject<'T> =
@@ -232,7 +232,7 @@ type Subject<'T> =
     
     member inline this.subscribe (observer: #IStreamSubscriber<'T>) =
         this.subscribe'(observer)
-        |> fun sub -> { new System.IDisposable with member _.Dispose () = sub.dispose() }
+        |> fun sub -> { new IDisposable with member _.Dispose () = sub.dispose() }
 
     member inline this.subscribe (observer: StreamSubscriber<'T>) =
         this.subscribe(unbox<IStreamSubscriber<'T>> observer)
@@ -258,7 +258,7 @@ type internal IHubConnection<'ClientApi,'ClientStreamFromApi,'ClientStreamToApi,
     [<Emit("$0.invoke($1...)")>]
     member _.invoke' (methodName: string, [<ParamArray>] args: ResizeArray<obj>) : JS.Promise<unit> = jsNative
 
-    member inline this.invoke (msg: 'ClientApi, invocationId: System.Guid) : Async<unit> =
+    member inline this.invoke (msg: 'ClientApi, invocationId: Guid) : Async<unit> =
         this.invoke'(HubMethod.Invoke, ResizeArray [| msg :> obj; invocationId :> obj |]) |> Async.AwaitPromise
     
     [<Emit("$0.keepAliveIntervalInMilliseconds")>]
@@ -452,7 +452,7 @@ module StreamHub =
 type internal HubMailbox<'ClientApi,'ServerApi> =
     | ProcessSends
     | Send of callback:(unit -> Async<unit>)
-    | ServerRsp of connectionId:string * invocationId: System.Guid * rsp:'ServerApi
+    | ServerRsp of connectionId:string * invocationId: Guid * rsp:'ServerApi
     | StartInvocation of msg:'ClientApi * replyChannel:AsyncReplyChannel<'ServerApi>
 
 [<NoComparison;NoEquality>]
@@ -477,7 +477,7 @@ type internal Handlers =
 type HubConnection<'ClientApi,'ClientStreamFromApi,'ClientStreamToApi,'ServerApi,'ServerStreamApi>
     internal (hub: IHubConnection<'ClientApi,'ClientStreamFromApi,'ClientStreamToApi,'ServerApi,'ServerStreamApi>, handlers: Handlers) =
 
-    let cts = new System.Threading.CancellationTokenSource()
+    let cts = new Threading.CancellationTokenSource()
     
     let processSends (pendingActions: (unit -> Async<unit>) list) =
         async {
@@ -487,7 +487,7 @@ type HubConnection<'ClientApi,'ClientStreamFromApi,'ClientStreamToApi,'ServerApi
         
     let mailbox =
         MailboxProcessor.Start (fun inbox ->
-            let rec loop (waitingInvocations: Map<System.Guid,AsyncReplyChannel<'ServerApi>>) (waitingConnections: (unit -> Async<unit>) list) =
+            let rec loop (waitingInvocations: Map<Guid,AsyncReplyChannel<'ServerApi>>) (waitingConnections: (unit -> Async<unit>) list) =
                 async {
                     let waitingConnections =
                         if hub.state = ConnectionState.Connected then
@@ -497,7 +497,6 @@ type HubConnection<'ClientApi,'ClientStreamFromApi,'ClientStreamToApi,'ServerApi
                         else waitingConnections
 
                     let! msg = inbox.Receive()
-                    
                     let hubId = hub.connectionId
                     
                     return!
@@ -555,7 +554,7 @@ type HubConnection<'ClientApi,'ClientStreamFromApi,'ClientStreamToApi,'ServerApi
         |> fun handlers -> handlers.apply(hub)
         hub.on<InvokeArg<'ServerApi>>(HubMethod.Invoke, fun rsp -> onRsp(rsp.connectionId, rsp.invocationId, rsp.message))
 
-    interface System.IDisposable with
+    interface IDisposable with
         member _.Dispose () =
             hub.off'(HubMethod.Invoke, onRsp)
             cts.Cancel()
@@ -577,7 +576,7 @@ type HubConnection<'ClientApi,'ClientStreamFromApi,'ClientStreamToApi,'ServerApi
     interface StreamHub.ClientToServer<'ClientApi,'ClientStreamToApi,'ServerApi> with
         member this.streamTo subject = this.streamTo subject
         member this.streamToAsPromise subject = this.streamToAsPromise subject
-        member this.streamToNow (subject) = this.streamToNow(subject)
+        member this.streamToNow subject = this.streamToNow(subject)
 
     interface StreamHub.ServerToClient<'ClientApi,'ClientStreamFromApi,'ServerApi,'ServerStreamApi> with
         member this.streamFrom msg = this.streamFrom msg
@@ -617,16 +616,16 @@ type HubConnection<'ClientApi,'ClientStreamFromApi,'ClientStreamToApi,'ServerApi
     member _.off () = hub.off()
     
     /// Registers a handler that will be invoked when the connection is closed.
-    member _.onClose (callback: (exn option -> unit)) = hub.onClose(callback)
+    member _.onClose (callback: exn option -> unit) = hub.onClose(callback)
 
     /// Callback when a new message is recieved.
     member _.onMessage (callback: 'ServerApi -> unit) = hub.onMessage(callback)
     
     /// Callback when the connection successfully reconnects.
-    member _.onReconnected (callback: (string option -> unit)) = hub.onReconnected(callback)
+    member _.onReconnected (callback: string option -> unit) = hub.onReconnected(callback)
 
     /// Callback when the connection starts reconnecting.
-    member _.onReconnecting (callback: (exn option -> unit)) = hub.onReconnecting(callback)
+    member _.onReconnecting (callback: exn option -> unit) = hub.onReconnecting(callback)
         
     /// Invokes a hub method on the server. Does not wait for a response from the receiver.
     /// 
