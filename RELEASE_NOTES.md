@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.0.2](https://gitlab.com/oceanbox/Fable.SignalR/compare/v2.0.1...v2.0.2) (2024-09-12)
+
+
+### Bug Fixes
+
+* fix nasty Invoke bug when skipNegotiation = true ([7cf5370](https://gitlab.com/oceanbox/Fable.SignalR/commit/7cf5370e1408f1b67ddcd9180b630f6fb6d97369))
+
 ## [2.0.1](https://gitlab.com/oceanbox/Fable.SignalR/compare/v2.0.0...v2.0.1) (2024-09-11)
 
 
