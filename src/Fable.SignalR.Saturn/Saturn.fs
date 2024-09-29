@@ -197,10 +197,12 @@ module SignalRExtension =
             [<CustomOperation("use_redis")>]
             member _.UseRedis (state: State.Settings<_,_,_,_,_>, connSting: string,  ?opts: System.Action<RedisOptions>) =
                 let redis =
-                    match opts with
-                    | Some o -> connSting, o
-                    | None -> connSting, ignore
-                    |> Some
+                    if connSting.Length > 0 then
+                        match opts with
+                        | Some o -> connSting, o
+                        | None -> connSting, ignore
+                        |> Some
+                    else None
                 state.MapSettings <| fun state ->
                     { state with
                         Config =
